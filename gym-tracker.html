@@ -1,0 +1,2555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Log Book — 8 Week Program</title>
+<style>
+  :root{
+    --bg:#0a0a0a;
+    --surface:#161616;
+    --surface-2:#1f1f1f;
+    --ink:#f2f2f0;
+    --ink-dim:#8a8a86;
+    --accent:#f2f2f0;
+    --accent-dim:#c4c4c0;
+    --good:#f2f2f0;
+    --bad:#6a6a66;
+    --border:rgba(242,242,240,0.12);
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --purple:#8b5cf6;
+    --purple-dim:#b39ddb;
+    --purple-soft:rgba(139,92,246,0.14);
+  }
+  *{box-sizing:border-box;}
+  html, body{height:100%;}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    position:relative;
+    overflow-x:hidden;
+  }
+  .bg-layer{
+    position:fixed; inset:0; z-index:0; pointer-events:none;
+    background:
+      radial-gradient(ellipse 800px 500px at 15% -5%, rgba(255,255,255,0.07), transparent 60%),
+      radial-gradient(ellipse 700px 500px at 100% 10%, rgba(255,255,255,0.05), transparent 55%),
+      radial-gradient(ellipse 900px 700px at 50% 120%, rgba(255,255,255,0.04), transparent 60%),
+      var(--bg);
+  }
+  .bg-layer::before{
+    content:'';
+    position:absolute; inset:-50%;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.035) 1px, transparent 1px);
+    background-size:46px 46px;
+    animation:driftGrid 40s linear infinite;
+  }
+  .bg-layer::after{
+    content:'';
+    position:absolute; inset:0;
+    background-image:radial-gradient(rgba(255,255,255,0.05) 1px, transparent 1px);
+    background-size:5px 5px;
+    opacity:0.5;
+  }
+  @keyframes driftGrid{ 0%{transform:translate(0,0);} 100%{transform:translate(46px,46px);} }
+  .wrap{position:relative;z-index:1;max-width:720px;margin:0 auto;padding:20px 16px 60px;}
+  .brand{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:18px;}
+  .brand h1{
+    font-size:22px;letter-spacing:-0.5px;text-transform:uppercase;font-weight:800;
+    font-stretch:condensed; margin:0;
+  }
+  .brand h1 span{color:var(--accent);}
+  .brand .meta{font-family:var(--mono);font-size:12px;color:var(--ink-dim);text-align:right;}
+
+  .phase-banner{
+    background:var(--surface); border:1px solid var(--border); border-left:3px solid var(--accent);
+    padding:10px 14px;border-radius:6px;font-size:13px;color:var(--ink-dim);margin-bottom:16px;
+  }
+  .phase-banner b{color:var(--accent);}
+
+  .tabs{display:flex;gap:6px;margin-bottom:16px;}
+  .tab{
+    flex:1;text-align:center;padding:9px 0;border-radius:6px;font-size:12px;
+    text-transform:uppercase;letter-spacing:0.06em;font-weight:700;
+    background:var(--surface);color:var(--ink-dim);cursor:pointer;border:1px solid var(--border);
+  }
+  .tab.active{background:var(--accent);color:#1c1b1a;border-color:var(--accent);}
+  #app.theme-mental .tab.active{color:#fff;}
+  #app.theme-financial .tab.active{color:#fff;}
+  #app.theme-spiritual .tab.active{color:#fff;}
+  #app.theme-mental{ --accent:#ef4444; --accent-dim:#f87171; --good:#ef4444; }
+  #app.theme-financial{ --accent:#3b82f6; --accent-dim:#60a5fa; --good:#3b82f6; }
+  #app.theme-spiritual{ --accent:#22c55e; --accent-dim:#4ade80; --good:#22c55e; }
+  #app.theme-general{ --accent:#8b5cf6; --accent-dim:#b39ddb; --good:#8b5cf6; }
+  .tab.tab-general{background:var(--purple-soft);color:var(--purple-dim);border-color:rgba(139,92,246,0.35);font-weight:800;}
+  .tab.tab-general.active{background:var(--purple);color:#fff;border-color:var(--purple);}
+
+  .gen-card{border-color:rgba(139,92,246,0.28);}
+  .gen-grid{display:flex;flex-direction:column;gap:6px;}
+  .gen-row{display:grid;gap:6px;align-items:center;}
+  .gen-row-label{font-family:var(--mono);font-size:11px;color:var(--purple-dim);font-weight:700;text-align:center;}
+  .gen-day-label{font-family:var(--mono);font-size:9px;color:var(--ink-dim);text-align:center;text-transform:uppercase;}
+  .gen-cell{
+    aspect-ratio:1;max-height:26px;border-radius:6px;background:var(--surface-2);border:1px solid var(--border);
+    display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;
+  }
+  .gen-chart-box{max-width:280px;margin:0 auto;background:var(--surface-2);border-radius:8px;padding:10px 8px 4px;}
+  .gen-legend{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:10px;}
+  .gen-legend-item{font-size:11px;color:var(--ink-dim);font-family:var(--mono);display:flex;align-items:center;gap:5px;}
+  .gen-legend-dot{width:8px;height:8px;border-radius:50%;display:inline-block;}
+  .gen-section{padding:14px 0;border-top:1px solid var(--border);}
+  .gen-section:first-child{border-top:none;padding-top:0;}
+  .gen-mini-stats{display:flex;gap:10px;margin-bottom:10px;}
+  .gen-mini-stat{flex:1;text-align:center;background:var(--surface-2);border-radius:7px;padding:8px 4px;}
+  .gen-mini-stat .num{font-family:var(--mono);font-size:15px;font-weight:700;color:var(--purple-dim);}
+  .gen-mini-stat .lbl{font-size:9px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.04em;margin-top:2px;}
+
+  .qc-card{padding-bottom:14px;}
+  .qc-row{display:flex;gap:8px;flex-wrap:wrap;}
+  .qc-btn{
+    flex:1;min-width:70px;background:var(--surface-2);border:2px solid var(--qc-color, var(--border));
+    color:var(--qc-color, var(--ink));padding:10px 6px;border-radius:8px;font-size:11px;font-weight:800;
+    text-transform:uppercase;letter-spacing:.03em;cursor:pointer;text-align:center;
+    display:flex;flex-direction:column;align-items:center;gap:4px;
+  }
+  .qc-btn.done{background:var(--qc-color);color:#0a0a0a;}
+  .qc-streak{font-size:10px;opacity:.85;font-family:var(--mono);text-transform:none;letter-spacing:0;}
+  .qc-rest{
+    flex:1;min-width:70px;background:var(--surface-2);border:2px dashed var(--border);color:var(--ink-dim);
+    padding:10px 6px;border-radius:8px;font-size:11px;text-align:center;display:flex;align-items:center;justify-content:center;
+    text-transform:uppercase;letter-spacing:.03em;font-weight:700;
+  }
+
+  .nudge-card{position:relative;}
+  .nudge-dismiss{position:absolute;top:12px;right:12px;background:none;border:none;color:var(--ink-dim);cursor:pointer;font-size:14px;}
+  .nudge-msg{font-size:13px;color:var(--ink-dim);margin-bottom:10px;line-height:1.5;}
+  .nudge-actions{display:flex;flex-wrap:wrap;gap:8px;}
+  .nudge-btn{background:var(--purple);color:#fff;border:none;padding:8px 12px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;text-transform:uppercase;letter-spacing:.03em;}
+
+  .hm-weeklabel{font-family:var(--mono);font-size:10px;color:var(--purple-dim);margin:10px 0 5px;text-transform:uppercase;}
+  .hm-weeklabel:first-child{margin-top:0;}
+  .hm-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;}
+  .hm-cell{
+    aspect-ratio:1;background:var(--surface-2);border:1px solid var(--border);border-radius:5px;
+    display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:2px;padding:3px;
+  }
+  .hm-cell.future{opacity:.25;}
+  .hm-cell.today{border-color:var(--purple);border-width:2px;}
+  .hm-cell.perfect{box-shadow:0 0 7px 1px rgba(139,92,246,0.75);border-color:var(--purple);}
+  .hm-dot{width:6px;height:6px;border-radius:50%;border:1.4px solid;box-sizing:border-box;}
+
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:14px;}
+  .day-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;}
+  .day-head h2{font-size:19px;margin:0;text-transform:uppercase;letter-spacing:-0.3px;}
+  .day-head .badge{font-family:var(--mono);font-size:11px;color:var(--ink-dim);}
+  .why{font-size:13px;color:var(--ink-dim);margin:2px 0 14px;}
+
+  .rest-card{text-align:center;padding:40px 16px;}
+  .rest-card .chalk{font-size:40px;margin-bottom:8px;}
+  .rest-card p{color:var(--ink-dim);font-size:14px;}
+
+  .ex{border-top:1px solid var(--border);padding:14px 0;}
+  .ex:first-of-type{border-top:none;padding-top:0;}
+  .ex-top{display:flex;justify-content:space-between;align-items:baseline;}
+  .ex-name{font-weight:700;font-size:15px;}
+  .ex-target{font-family:var(--mono);font-size:12px;color:var(--accent);}
+  .ex-sub{font-size:12px;color:var(--ink-dim);margin-top:2px;}
+  .ex-row{display:flex;gap:8px;margin-top:10px;align-items:center;flex-wrap:wrap;}
+  .ex-row input[type=number]{
+    width:78px;background:var(--surface-2);border:1px solid var(--border);color:var(--ink);
+    padding:8px;border-radius:6px;font-family:var(--mono);font-size:14px;
+  }
+  .unit{font-size:12px;color:var(--ink-dim);}
+  .feel-btns{display:flex;gap:5px;}
+  .feel{
+    font-size:11px;padding:7px 9px;border-radius:5px;border:1px solid var(--border);
+    background:var(--surface-2);color:var(--ink-dim);cursor:pointer;
+  }
+  .feel.sel-easy.on{background:#f2f2f0;color:#0a0a0a;border-color:#f2f2f0;}
+  .feel.sel-justright.on{background:transparent;color:var(--ink);border-color:var(--ink);border-width:2px;}
+  .feel.sel-hard.on{background:#3a3a38;color:var(--ink-dim);border-color:var(--ink-dim);border-style:dashed;}
+  .log-btn{
+    margin-left:auto;background:var(--accent);color:#1c1b1a;border:none;
+    padding:8px 14px;border-radius:6px;font-weight:700;font-size:12px;cursor:pointer;
+    text-transform:uppercase;letter-spacing:.03em;
+  }
+  .log-btn:disabled{opacity:.4;cursor:default;}
+  .logged-tag{font-size:12px;color:var(--good);font-family:var(--mono);}
+  .suggestion{font-size:12px;color:var(--ink-dim);margin-top:6px;}
+  .suggestion b{color:var(--accent);}
+
+  .grid{display:grid;grid-template-columns:repeat(7,1fr);gap:6px;}
+  .gcell{
+    aspect-ratio:1;border-radius:6px;background:var(--surface-2);border:1px solid var(--border);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;
+    position:relative;
+  }
+  .gcell.today{border-color:var(--accent);border-width:2px;}
+  .gcell.future{opacity:0.35;cursor:default;}
+  .gcell .dlabel{font-size:9px;color:var(--ink-dim);text-transform:uppercase;font-family:var(--mono);}
+  .gcell .mark{font-size:16px;margin-top:2px;}
+  .weeklabel{font-family:var(--mono);font-size:11px;color:var(--ink-dim);margin:14px 0 6px;text-transform:uppercase;}
+
+  .start-screen{text-align:center;padding:60px 20px;}
+  .start-screen h1{font-size:26px;text-transform:uppercase;margin-bottom:10px;}
+  .start-screen p{color:var(--ink-dim);font-size:14px;max-width:400px;margin:0 auto 24px;}
+  .start-btn{
+    background:var(--accent);color:#1c1b1a;border:none;padding:14px 26px;border-radius:8px;
+    font-weight:800;font-size:14px;text-transform:uppercase;letter-spacing:.05em;cursor:pointer;
+  }
+  .footer-actions{text-align:center;margin-top:22px;}
+  .reset{background:none;border:none;color:var(--ink-dim);font-size:11px;text-decoration:underline;cursor:pointer;}
+  .loading{text-align:center;color:var(--ink-dim);padding:40px;font-family:var(--mono);font-size:13px;}
+
+  .ex-body{display:flex;gap:12px;align-items:flex-start;}
+  .video-box{
+    flex-shrink:0;width:100px;background:var(--surface-2);border:1px solid var(--border);
+    border-radius:8px;overflow:hidden;
+  }
+  .video-embed{position:relative;width:100%;aspect-ratio:9/16;background:#000;}
+  .video-embed.yt, .video-embed.vm{aspect-ratio:16/9;}
+  .video-embed iframe, .video-embed video{position:absolute;top:0;left:0;width:100%;height:100%;border:0;}
+  .video-placeholder{padding:8px;text-align:center;}
+  .video-placeholder input{
+    width:100%;background:var(--bg);border:1px solid var(--border);color:var(--ink);
+    padding:6px;border-radius:5px;font-size:11px;margin-bottom:6px;
+  }
+  .video-placeholder button{
+    width:100%;background:var(--accent);color:#1c1b1a;border:none;padding:6px;
+    border-radius:5px;font-size:11px;font-weight:700;cursor:pointer;
+  }
+  .video-or{font-size:9px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.05em;margin:6px 0;}
+  .video-upload-btn{
+    display:block;width:100%;background:var(--bg);border:1px dashed var(--border);color:var(--ink-dim);
+    padding:6px 4px;border-radius:5px;font-size:10px;cursor:pointer;text-align:center;box-sizing:border-box;
+  }
+  .video-upload-btn:hover{border-color:var(--accent);color:var(--accent);}
+  .video-change{font-size:10px;color:var(--ink-dim);text-decoration:underline;cursor:pointer;text-align:center;padding:4px;background:none;border:none;width:100%;}
+  .cue{font-size:12px;color:var(--ink-dim);margin-top:2px;font-style:italic;}
+  .start-weight{font-size:13px;color:var(--accent);font-family:var(--mono);margin-top:2px;}
+  .bw-input{margin:16px 0;}
+  .bw-input label{display:block;font-size:12px;color:var(--ink-dim);margin-bottom:6px;}
+  .bw-input input{
+    background:var(--surface-2);border:1px solid var(--border);color:var(--ink);padding:10px;
+    border-radius:6px;font-family:var(--mono);font-size:14px;width:140px;text-align:center;
+  }
+  .skip-link{display:block;margin-top:10px;font-size:12px;color:var(--ink-dim);text-decoration:underline;cursor:pointer;background:none;border:none;}
+
+  .ex-remove{background:none;border:none;color:var(--ink-dim);font-size:16px;cursor:pointer;line-height:1;padding:0 2px;}
+  .ex-remove:hover{color:var(--bad);}
+  .add-ex-btn{
+    width:100%;margin-top:12px;background:none;border:1px dashed var(--border);color:var(--ink-dim);
+    padding:10px;border-radius:8px;font-size:12px;cursor:pointer;text-transform:uppercase;letter-spacing:.04em;
+  }
+  .add-ex-form{
+    margin-top:12px;padding:12px;background:var(--surface-2);border-radius:8px;display:none;
+  }
+  .add-ex-form.open{display:block;}
+  .add-ex-form input, .add-ex-form select{
+    background:var(--bg);border:1px solid var(--border);color:var(--ink);padding:8px;
+    border-radius:6px;font-size:13px;margin-bottom:8px;width:100%;
+  }
+  .add-ex-form .row2{display:flex;gap:8px;}
+  .add-ex-form .row2 input, .add-ex-form .row2 select{width:auto;flex:1;}
+  .add-ex-form .actions{display:flex;gap:8px;margin-top:4px;}
+  .add-ex-form .actions button{flex:1;padding:8px;border-radius:6px;border:none;font-weight:700;font-size:12px;cursor:pointer;}
+  .add-ex-form .actions .save{background:var(--accent);color:#1c1b1a;}
+  .add-ex-form .actions .cancel{background:var(--surface);color:var(--ink-dim);border:1px solid var(--border);}
+
+  .quote-card{
+    background:linear-gradient(135deg, var(--surface) 0%, var(--surface-2) 100%);
+    border:1px solid var(--border); border-radius:12px; padding:22px 20px;margin-bottom:16px;
+    position:relative; overflow:hidden;
+  }
+  .quote-card::before{
+    content:'"'; position:absolute; top:-30px; left:8px; font-size:140px; font-family:Georgia,serif;
+    color:rgba(242,242,240,0.06); line-height:1;
+  }
+  .quote-text{font-size:16px;font-style:italic;line-height:1.5;position:relative;z-index:1;}
+  .quote-author{font-size:11px;color:var(--ink-dim);margin-top:10px;text-transform:uppercase;letter-spacing:.08em;position:relative;z-index:1;}
+
+  .sched-list{list-style:none;margin:0;padding:0;}
+  .sched-list li{
+    display:flex;justify-content:space-between;align-items:center;padding:10px 0;
+    border-top:1px solid var(--border);font-size:13px;
+  }
+  .sched-list li:first-child{border-top:none;}
+  .sched-list .d{color:var(--ink-dim);text-transform:uppercase;font-size:11px;font-family:var(--mono);width:44px;}
+  .sched-list .g{flex:1;text-align:right;}
+  .sched-list li.today-row{color:var(--ink);font-weight:700;}
+  .sched-list li.today-row .d{color:var(--ink);}
+  .sched-list li.today-row::after{content:'●';margin-left:8px;font-size:8px;}
+
+  .weight-log-row{display:flex;gap:8px;margin-bottom:14px;}
+  .weight-log-row input{
+    flex:1;background:var(--surface-2);border:1px solid var(--border);color:var(--ink);
+    padding:10px;border-radius:6px;font-family:var(--mono);font-size:14px;
+  }
+  .weight-log-row button{
+    background:var(--accent);color:#0a0a0a;border:none;padding:10px 16px;border-radius:6px;
+    font-weight:700;font-size:12px;cursor:pointer;text-transform:uppercase;
+  }
+  .weight-stats{display:flex;gap:16px;margin-bottom:14px;}
+  .wstat{flex:1;text-align:center;background:var(--surface-2);border-radius:8px;padding:12px 6px;}
+  .wstat .num{font-family:var(--mono);font-size:20px;font-weight:700;}
+  .wstat .lbl{font-size:10px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.05em;margin-top:2px;}
+  .chart-empty{text-align:center;color:var(--ink-dim);font-size:12px;padding:30px 0;}
+
+  .todo-add{display:flex;gap:8px;margin-bottom:12px;}
+  .todo-add input{
+    flex:1;background:var(--surface-2);border:1px solid var(--border);color:var(--ink);
+    padding:10px;border-radius:6px;font-size:13px;
+  }
+  .todo-add button{
+    background:var(--accent);color:#0a0a0a;border:none;padding:10px 16px;border-radius:6px;
+    font-weight:700;cursor:pointer;font-size:14px;
+  }
+  .todo-list{list-style:none;margin:0;padding:0;}
+  .todo-item{
+    display:flex;align-items:center;gap:10px;padding:9px 0;border-top:1px solid var(--border);font-size:13px;
+  }
+  .todo-item:first-child{border-top:none;}
+  .todo-item.done .todo-label{text-decoration:line-through;color:var(--ink-dim);}
+  .todo-check{
+    width:18px;height:18px;border:1.5px solid var(--ink-dim);border-radius:4px;flex-shrink:0;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;font-size:12px;
+  }
+  .todo-item.done .todo-check{background:var(--accent);color:#0a0a0a;border-color:var(--accent);}
+  .todo-label{flex:1;cursor:pointer;}
+  .todo-del{background:none;border:none;color:var(--ink-dim);cursor:pointer;font-size:15px;}
+  .todo-empty{color:var(--ink-dim);font-size:12px;text-align:center;padding:16px 0;}
+  .todo-meta{display:flex;align-items:center;gap:6px;margin-top:2px;flex-wrap:wrap;}
+  .todo-time{font-family:var(--mono);font-size:10px;color:var(--accent);background:var(--surface-2);border:1px solid var(--border);padding:2px 6px;border-radius:4px;}
+  .todo-note{font-size:11px;color:var(--ink-dim);font-style:italic;}
+  .todo-origin{font-size:9px;text-transform:uppercase;letter-spacing:.04em;font-weight:800;padding:2px 6px;border-radius:4px;background:var(--purple-soft);color:var(--purple-dim);}
+  .todo-add-extra{display:flex;gap:8px;margin-bottom:10px;}
+  .todo-add-extra input[type=time]{background:var(--surface-2);border:1px solid var(--border);color:var(--ink);padding:8px;border-radius:6px;font-family:var(--mono);font-size:12px;}
+  .todo-add-extra input[type=text]{flex:1;background:var(--surface-2);border:1px solid var(--border);color:var(--ink);padding:8px;border-radius:6px;font-size:12px;}
+
+  .section-title{
+    font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-dim);
+    margin:0 0 12px;font-weight:700;
+  }
+
+  .toast-overlay{
+    position:fixed;inset:0;background:rgba(0,0,0,0.75);display:flex;align-items:center;justify-content:center;
+    z-index:100;padding:20px;
+  }
+  .toast-box{
+    background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:32px 26px;
+    text-align:center;max-width:340px;
+  }
+  .toast-box .big{font-size:15px;line-height:1.5;margin-bottom:18px;}
+  .toast-box button{
+    background:var(--accent);color:#0a0a0a;border:none;padding:10px 24px;border-radius:8px;
+    font-weight:700;cursor:pointer;text-transform:uppercase;font-size:12px;letter-spacing:.05em;
+  }
+
+  .fav-star{background:none;border:none;color:var(--ink-dim);font-size:15px;cursor:pointer;padding:0;margin-right:2px;vertical-align:middle;}
+  .fav-star.on{color:var(--ink);}
+
+  .badges-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:14px;}
+  .badge-tile{text-align:center;padding:10px 4px;border-radius:8px;border:1px solid var(--border);opacity:0.35;}
+  .badge-tile.unlocked{opacity:1;background:var(--surface-2);border-color:var(--ink-dim);}
+  .badge-icon{font-size:18px;}
+  .badge-label{font-size:8.5px;color:var(--ink-dim);margin-top:4px;text-transform:uppercase;letter-spacing:.02em;line-height:1.2;}
+
+  .fav-list{list-style:none;margin:0;padding:0;}
+  .fav-list li{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-top:1px solid var(--border);font-size:13px;}
+  .fav-list li:first-child{border-top:none;}
+  .fav-list .fname{font-weight:600;}
+  .fav-list .fcue{font-size:11px;color:var(--ink-dim);font-style:italic;margin-top:2px;}
+  .fav-remove{background:none;border:none;color:var(--ink-dim);cursor:pointer;font-size:14px;}
+
+  .timer-widget{position:fixed;right:18px;bottom:18px;z-index:50;}
+  .timer-fab{
+    width:54px;height:54px;border-radius:50%;background:var(--ink);color:#0a0a0a;
+    display:flex;align-items:center;justify-content:center;font-size:22px;cursor:pointer;
+    box-shadow:0 4px 18px rgba(0,0,0,0.5);
+  }
+  .timer-panel{
+    position:absolute;bottom:66px;right:0;background:var(--surface);border:1px solid var(--border);
+    border-radius:12px;padding:18px;width:200px;display:none;box-shadow:0 8px 30px rgba(0,0,0,0.6);
+  }
+  .timer-panel.open{display:block;}
+  .timer-display{font-family:var(--mono);font-size:34px;text-align:center;margin-bottom:12px;letter-spacing:1px;}
+  .timer-presets{display:flex;gap:6px;margin-bottom:10px;}
+  .timer-presets button{
+    flex:1;background:var(--surface-2);border:1px solid var(--border);color:var(--ink-dim);
+    padding:7px 0;border-radius:6px;font-size:11px;cursor:pointer;
+  }
+  .timer-controls{display:flex;gap:6px;}
+  .timer-controls button{
+    flex:1;background:var(--accent);color:#0a0a0a;border:none;padding:8px 0;border-radius:6px;
+    font-size:11px;font-weight:700;cursor:pointer;text-transform:uppercase;
+  }
+  .timer-controls button.secondary{background:var(--surface-2);color:var(--ink-dim);border:1px solid var(--border);}
+  .timer-mode-tabs{display:flex;gap:6px;margin-bottom:10px;}
+  .tmode{flex:1;background:none;border:1px solid var(--border);color:var(--ink-dim);padding:6px 0;border-radius:6px;font-size:10px;text-transform:uppercase;cursor:pointer;letter-spacing:.04em;}
+  .tmode.active{background:var(--surface-2);color:var(--ink);border-color:var(--ink-dim);}
+
+  .coach-intro{font-size:13px;color:var(--ink-dim);margin-bottom:14px;line-height:1.5;}
+  .coach-log{display:flex;flex-direction:column;gap:10px;margin-bottom:14px;max-height:420px;overflow-y:auto;}
+  .coach-msg{padding:10px 14px;border-radius:10px;font-size:13px;line-height:1.5;max-width:88%;}
+  .coach-msg.user{align-self:flex-end;background:var(--ink);color:#0a0a0a;}
+  .coach-msg.assistant{align-self:flex-start;background:var(--surface-2);border:1px solid var(--border);}
+  .coach-msg.loading{align-self:flex-start;background:var(--surface-2);color:var(--ink-dim);font-style:italic;}
+  .coach-input-row{display:flex;gap:8px;}
+  .coach-input-row textarea{
+    flex:1;background:var(--surface-2);border:1px solid var(--border);color:var(--ink);
+    padding:10px;border-radius:8px;font-size:13px;resize:none;font-family:inherit;min-height:44px;
+  }
+  .coach-input-row button{
+    background:var(--accent);color:#0a0a0a;border:none;padding:0 18px;border-radius:8px;
+    font-weight:700;cursor:pointer;font-size:13px;
+  }
+  .coach-empty{color:var(--ink-dim);font-size:12px;text-align:center;padding:12px 0;}
+
+  .court-seal{text-align:center;padding:6px 0 16px;}
+  .court-seal .gavel{font-size:30px;}
+  .court-seal h2{font-size:15px;text-transform:uppercase;letter-spacing:.08em;margin:6px 0 2px;}
+  .court-seal p{font-size:12px;color:var(--ink-dim);max-width:420px;margin:0 auto;line-height:1.5;}
+  .confess-box textarea{
+    width:100%;background:var(--surface-2);border:1px solid var(--border);color:var(--ink);
+    padding:12px;border-radius:8px;font-size:13px;font-family:inherit;resize:vertical;min-height:90px;
+  }
+  .confess-actions{display:flex;gap:8px;margin-top:10px;}
+  .confess-actions button{
+    background:var(--accent);color:#0a0a0a;border:none;padding:10px 16px;border-radius:8px;
+    font-weight:700;font-size:12px;cursor:pointer;text-transform:uppercase;letter-spacing:.03em;
+  }
+  .confess-actions button.secondary{background:var(--surface-2);color:var(--ink-dim);border:1px solid var(--border);}
+  .confess-actions button:disabled{opacity:.4;cursor:default;}
+  .verdict-card{border:1px solid var(--border);border-radius:12px;padding:18px;margin-top:16px;background:var(--surface-2);}
+  .verdict-class{
+    display:inline-block;font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.05em;
+    padding:4px 10px;border-radius:20px;border:1px solid var(--ink-dim);color:var(--ink-dim);margin-bottom:10px;
+  }
+  .verdict-class.c1{border-color:#8a8a86;color:#c4c4c0;}
+  .verdict-class.c2{border-color:#b8b8b0;color:var(--ink);}
+  .verdict-class.c3{border-color:var(--ink);color:var(--ink);background:rgba(242,242,240,0.06);}
+  .verdict-class.c4{border-color:var(--ink);color:#0a0a0a;background:var(--ink);}
+  .verdict-rule{font-size:14px;font-weight:700;margin-bottom:6px;}
+  .verdict-reason{font-size:13px;color:var(--ink-dim);line-height:1.5;margin-bottom:14px;}
+  .verdict-punish-label{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-dim);margin-bottom:6px;}
+  .verdict-punish{font-size:14px;line-height:1.55;padding:12px;background:var(--bg);border-radius:8px;border-left:3px solid var(--accent);}
+  .verdict-actions{display:flex;gap:8px;margin-top:12px;}
+  .verdict-actions button{
+    flex:1;background:var(--surface);color:var(--ink);border:1px solid var(--border);padding:9px 0;
+    border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;text-transform:uppercase;letter-spacing:.03em;
+  }
+  .verdict-actions button.primary{background:var(--accent);color:#0a0a0a;border:none;}
+  .court-timer-box{text-align:center;margin-top:14px;padding-top:14px;border-top:1px solid var(--border);}
+  .court-timer-box .lbl{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-dim);margin-bottom:8px;}
+  .court-timer-display{font-family:var(--mono);font-size:38px;letter-spacing:1px;margin-bottom:10px;}
+  .court-timer-controls{display:flex;gap:6px;justify-content:center;}
+  .court-timer-controls button{
+    background:var(--accent);color:#0a0a0a;border:none;padding:8px 16px;border-radius:6px;
+    font-size:11px;font-weight:700;cursor:pointer;text-transform:uppercase;
+  }
+  .court-timer-controls button.secondary{background:var(--surface);color:var(--ink-dim);border:1px solid var(--border);}
+  .docket{margin-top:22px;}
+  .docket-item{border-top:1px solid var(--border);padding:12px 0;}
+  .docket-item:first-child{border-top:none;}
+  .docket-date{font-family:var(--mono);font-size:10px;color:var(--ink-dim);margin-bottom:4px;}
+  .docket-confession{font-size:12px;color:var(--ink-dim);font-style:italic;margin-bottom:4px;}
+  .docket-verdict{font-size:12px;}
+  .court-empty{color:var(--ink-dim);font-size:12px;text-align:center;padding:16px 0;}
+
+  .tabs.subtabs{margin-top:-2px;margin-bottom:14px;}
+  .tabs.subtabs .tab{font-size:11px;padding:7px 0;}
+  .tab.tab-court{background:var(--surface);}
+  .tab.tab-court.active{background:var(--ink);color:#0a0a0a;}
+
+  .pillar-tagline{font-size:12px;color:var(--ink-dim);margin:-6px 0 14px;line-height:1.5;}
+  .task-list{list-style:none;margin:0;padding:0;}
+  .task-item{
+    display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-top:1px solid var(--border);font-size:14px;
+  }
+  .task-item:first-child{border-top:none;}
+  .task-item.done .task-label{text-decoration:line-through;color:var(--ink-dim);}
+  .task-check{
+    width:20px;height:20px;border:1.5px solid var(--ink-dim);border-radius:5px;flex-shrink:0;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;font-size:13px;margin-top:1px;
+  }
+  .task-item.done .task-check{background:var(--accent);color:#0a0a0a;border-color:var(--accent);}
+  .task-label{flex:1;cursor:pointer;padding-top:1px;}
+  .week-task-note{font-size:10px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.05em;margin-top:1px;}
+  .targets-list{list-style:none;margin:0;padding:0;}
+  .targets-list li{padding:8px 0;border-top:1px solid var(--border);font-size:13px;color:var(--ink-dim);line-height:1.4;}
+  .targets-list li:first-child{border-top:none;}
+
+  .assistant-widget{position:fixed;right:18px;bottom:86px;z-index:52;}
+  .assistant-panel{width:270px;max-width:calc(100vw - 36px);}
+  .assistant-panel .coach-log{max-height:280px;}
+</style>
+</head>
+<body>
+<div class="bg-layer"></div>
+<div class="wrap" id="app"><div class="loading">Loading log book…</div></div>
+
+<div class="assistant-widget">
+  <div class="timer-fab" onclick="toggleAssistantPanel()">🤖</div>
+  <div class="timer-panel assistant-panel" id="assistant-panel">
+    <div class="coach-intro">Your assistant across all four pillars — Physical, Mental, Financial, Spiritual. Ask anything.</div>
+    <div class="coach-log" id="assistant-log"></div>
+    <div class="coach-input-row">
+      <textarea id="assistant-input" placeholder="Ask your coach..." onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendCoachMessage();}"></textarea>
+      <button onclick="sendCoachMessage()">Send</button>
+    </div>
+    <button class="reset" style="margin-top:8px;" onclick="clearCoachHistory()">Clear chat</button>
+  </div>
+</div>
+
+<div class="timer-widget">
+  <div class="timer-fab" onclick="toggleTimerPanel()">⏱</div>
+  <div class="timer-panel" id="timer-panel">
+    <div class="timer-mode-tabs">
+      <button class="tmode active" id="tmode-rest" onclick="setTimerMode('rest')">Rest</button>
+      <button class="tmode" id="tmode-stopwatch" onclick="setTimerMode('stopwatch')">Stopwatch</button>
+    </div>
+    <div class="timer-display" id="timer-display">01:30</div>
+    <div id="rest-controls">
+      <div class="timer-presets">
+        <button onclick="setRestTimer(60)">60s</button>
+        <button onclick="setRestTimer(90)">90s</button>
+        <button onclick="setRestTimer(120)">120s</button>
+      </div>
+      <div class="timer-controls">
+        <button onclick="startTimer()">Start</button>
+        <button class="secondary" onclick="pauseTimer()">Pause</button>
+        <button class="secondary" onclick="resetTimerDisplay()">Reset</button>
+      </div>
+    </div>
+    <div id="stopwatch-controls" style="display:none;">
+      <div class="timer-controls">
+        <button onclick="stopwatchStart()">Start</button>
+        <button class="secondary" onclick="stopwatchPause()">Pause</button>
+        <button class="secondary" onclick="stopwatchReset()">Reset</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<script>
+const WEEKS = 8;
+const TOTAL_DAYS = WEEKS * 7;
+const DAY_MS = 86400000;
+
+const DAY_NAMES = {0:'Sunday',1:'Monday',2:'Tuesday',3:'Wednesday',4:'Thursday',5:'Friday',6:'Saturday'};
+
+const CONSTITUTION_TEXT = `THE SUMMER CONSTITUTION OF DAGI (Age 20) — Effective July 1 to Pagume 5. Strictness Level: 10/10 (Absolute).
+
+PART I — CORE PHILOSOPHY & IDENTITY
+Article 1 (Identity): I am disciplined, unguided by transient feelings. I choose long-term success over short-term comfort. Every daily action must command the respect of my future self.
+Article 2 (Faith): Worship of God is absolute, always taking precedence over cheap entertainment. Faithfully attend church; protect and nurture spiritual life. Carry myself with honesty, respect, and humility daily.
+Article 3 (Character & Boundaries): Keep promises without compromise — my word is an unbreakable contract. Take total responsibility for mistakes; never blame others. Social media is strictly a professional tool, never an idle pastime. Every hour must have a distinct purpose; avoid activities that strip value from my future self.
+
+PART II — THE PMFS PILLAR FRAMEWORK (weekly, measurable progress required in all four)
+P — Physical: Gym 6 days/week; daily walk 1-2 hours; strict clean diet, zero junk food; protect sleep & energy.
+M — Mental: Read 2-4 high-value books over summer; learn one practical non-academic skill daily; engage in critical problem-solving; continuous self-education.
+F — Financial: Save before spending; zero unnecessary debt; upload 8-12 high-quality videos; study top creators 30 min/week.
+S — Spiritual: 100% church attendance; daily morning prayer; consistent scriptural reflection; live out principles daily.
+
+Article 4 (Non-Negotiable Daily Execution) — every calendar day requires:
+- Self-Education: read books or build a high-value, non-academic skill.
+- Exercise: targeted gym session or a disciplined long walk.
+- Content: active creation/editing/skill refinement before any consumption.
+- Reflection: structured prayer and silent personal alignment.
+- Digital Fast: zero uncalculated, passive timeline scrolling.
+
+PART III — SUMMER PERFORMANCE TARGETS (anything less is a strategic failure)
+- Physical: reach 65-68kg; complete >90% of scheduled gym sessions; weekly progress photos.
+- Mental & Mastery: read, finish, and write notes on 2-4 targeted books.
+- YouTube & Brand: produce/upload 8-12 high-value videos; master one new advanced video editing skill every week.
+- Spiritual & Character: 100% church attendance; daily structured prayer and reflection.
+
+PART IV — PENAL CODE & CORRECTION MATRIX
+Article 5 (Enforcement Protocol): On infraction, log: (1) the specific rule broken, (2) root cause of the breakdown, (3) current offense count within the 7-day rolling window.
+
+VIOLATION CLASSES:
+Class 1 — Minor. Examples: hygiene skipped; sleep missed by <1 hour; phone limit exceeded by <30 mins.
+  Punishment (select one): Read 25 pages; 45-minute disciplined walk; 300-word written reflection; zero entertainment for the rest of the day.
+Class 2 — Moderate. Examples: junk food or soda consumption; excessive phone use; skipped daily walk.
+  Punishment (select one): 1 hour extra skill development/creation; 1 hour content skill practice; absolute social media ban for 24 hours; read 50 pages; 90-minute walk.
+Class 3 — Major. Examples: missed gym session; skipped church service; broken promise; deliberate scheduling neglect.
+  Punishment (select one): 2 hours extra content creation/skill learning; absolute entertainment ban for 48 hours; 100 pages read over 3 days; wake up 1 hour earlier for 3 days.
+Class 4 — Constitutional. Examples: lying about task completion; repeated same-class infractions; abandoning the discipline challenge.
+  Punishment: Immediate Constitutional Court Session; comprehensive rule review; 1-page failure report; 4 hours pure productive work before any leisure; double all tasks for 3 days.
+
+Repeat-Offense Multiplier: 1st offense = base punishment. 2nd offense (within 7 days) = +50% volume/duration. 3rd offense = double penalty. 4th offense = automatic Class 4 Constitutional Court.
+
+The Supreme Rule: any violation must be self-reported within 24 hours. Concealing, omitting, or soft-pedaling a violation is itself a Class 4 Constitutional Crime — worse than the initial breach.
+
+Exemptions: punishments are waived only for certified physical illness, family emergencies, or mandatory church duties. Laziness, lack of motivation, and procrastination are explicitly banned as excuses.
+
+Amendment Rule: if a rule repeatedly fails due to systemic friction, optimize/reinforce the rule's text rather than abandon the constitution.`;
+
+const QUOTES = [
+  { text:"Discipline is choosing between what you want now and what you want most.", author:"Unknown" },
+  { text:"The body achieves what the mind believes.", author:"Unknown" },
+  { text:"You don't have to be extreme, just consistent.", author:"Unknown" },
+  { text:"Small daily improvements are the key to staggering long-term results.", author:"Unknown" },
+  { text:"The only bad workout is the one that didn't happen.", author:"Unknown" },
+  { text:"Strength doesn't come from what you can do. It comes from overcoming the things you thought you couldn't.", author:"Rikki Rogers" },
+  { text:"Your body can stand almost anything. It's your mind you have to convince.", author:"Unknown" },
+  { text:"Progress is progress, no matter how small.", author:"Unknown" },
+  { text:"The pain of discipline weighs ounces, the pain of regret weighs tons.", author:"Jim Rohn" },
+  { text:"Every session you show up is a vote for the person you're becoming.", author:"Unknown" },
+  { text:"Don't count the days, make the days count.", author:"Muhammad Ali" },
+  { text:"Motivation gets you started. Habit keeps you going.", author:"Jim Ryun" },
+  { text:"You are one workout away from a good mood.", author:"Unknown" },
+  { text:"Fall in love with the process and the results will come.", author:"Unknown" },
+  { text:"A year from now you'll wish you had started today.", author:"Karen Lamb" },
+];
+
+const DONE_MESSAGES = [
+  "Session closed. That's one more brick in the wall.",
+  "Logged. Your future self just said thank you.",
+  "Done. Recovery starts now — let the muscle rebuild.",
+  "That's in the books. Consistency is the whole game.",
+  "Solid work. Go refuel and rest.",
+  "Another one down. This is how strength gets built — quietly, week after week.",
+  "Complete. Nobody sees the work, only the result — but you know.",
+  "Locked in. See you next session.",
+  "Finished strong. Let your body recover before the next one.",
+  "Marked. Small sessions like this compound into real change.",
+];
+
+function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+const SESSION_QUOTE = pick(QUOTES);
+
+const PROGRAM = {
+  1: { key:'mon', label:'Chest + Triceps', why:'Heavy push focus — presses shape the chest, triceps finish primed as a natural synergist.',
+    exercises:[
+      {id:'mon_bench', name:'Flat Barbell Bench Press', sets:3, reps:'6-8', track:'weight', cat:'compound', lower:false, pattern:'push', cue:'Bar to mid-chest, press straight up until arms lock out.', startW:{ratio:0.3, fallback:20}},
+      {id:'mon_incline_db', name:'Incline Dumbbell Press', sets:3, reps:'8-10', track:'weight', cat:'compound', lower:false, pattern:'push', cue:'Press dumbbells up and slightly inward, stop just short of locking elbows.', startW:{ratio:0.12, fallback:8}},
+      {id:'mon_dips', name:'Chest Dips', sets:3, reps:'10-12', track:'reps', cat:'bodyweight', lower:false, pattern:'push', cue:'Lower until shoulders are level with elbows, press back up.'},
+      {id:'mon_ohe', name:'Tricep Overhead Extension', sets:3, reps:'10-12', track:'weight', cat:'isolation', lower:false, pattern:'curl', cue:'Lower weight behind your head, extend by straightening elbows.', startW:{ratio:0.05, fallback:6}},
+      {id:'mon_pushdown', name:'Tricep Cable Pushdowns', sets:3, reps:'12-15', track:'weight', cat:'isolation', lower:false, pattern:'push', cue:'Elbows pinned to your sides, push the bar down until arms straighten.', startW:{ratio:0.08, fallback:12}},
+      {id:'mon_crossover', name:'Cable Crossover', sets:3, reps:'12-15', track:'weight', cat:'isolation', lower:false, pattern:'push', cue:'Pull handles down and across in an arc, squeeze your chest at the bottom.', startW:{ratio:0.05, fallback:5}},
+      {id:'mon_pushup', name:'Push-Ups', sets:3, reps:'15-20', track:'reps', cat:'bodyweight', lower:false, pattern:'push', cue:'Body in a straight line, lower chest to the floor, press back up.'},
+      {id:'mon_machinepress', name:'Machine Chest Press', sets:3, reps:'10-12', track:'weight', cat:'compound', lower:false, pattern:'push', cue:'Press the handles forward until arms are extended, control the return.', startW:{ratio:0.2, fallback:15}},
+      {id:'mon_skullcrusher', name:'EZ-Bar Skull Crusher', sets:3, reps:'10-12', track:'weight', cat:'isolation', lower:false, pattern:'curl', cue:'Lower the bar to your forehead, keep elbows still, extend back up.', startW:{ratio:0.06, fallback:8}},
+      {id:'mon_diamondpushup', name:'Diamond Push-Ups', sets:3, reps:'max', track:'reps', cat:'bodyweight', lower:false, pattern:'push', cue:'Hands together under your chest, lower down, press back up to target triceps.'},
+    ]},
+  2: { key:'tue', label:'Back + Biceps', why:'Pulling movements warm the elbow flexors natively, so direct arm work lands with less wasted effort.',
+    exercises:[
+      {id:'tue_deadlift', name:'Deadlift or Lat Pulldown', sets:3, reps:'6-8', track:'weight', cat:'compound', lower:true, pattern:'hinge', cue:'Hinge at the hips, flat back, drive through heels to stand (lighter if using the pulldown machine).', startW:{ratio:0.4, fallback:25}},
+      {id:'tue_row', name:'Barbell Bent-Over Row', sets:3, reps:'8-10', track:'weight', cat:'compound', lower:false, pattern:'pull', cue:'Hinge forward, pull the bar to your lower ribs, squeeze shoulder blades.', startW:{ratio:0.3, fallback:20}},
+      {id:'tue_cablerow', name:'Seated Cable Row', sets:3, reps:'10-12', track:'weight', cat:'compound', lower:false, pattern:'pull', cue:'Pull handle to your torso, elbows close, chest tall throughout.', startW:{ratio:0.35, fallback:25}},
+      {id:'tue_curl', name:'Barbell Bicep Curl', sets:3, reps:'8-10', track:'weight', cat:'isolation', lower:false, pattern:'curl', cue:'Elbows fixed at your sides, curl the bar up, lower with control.', startW:{ratio:0.1, fallback:10}},
+      {id:'tue_hammer', name:'Dumbbell Hammer Curl', sets:3, reps:'10-12', track:'weight', cat:'isolation', lower:false, pattern:'curl', cue:'Palms facing in, curl straight up without swinging the elbows.', startW:{ratio:0.06, fallback:6}},
+      {id:'tue_widepulldown', name:'Wide-Grip Lat Pulldown', sets:3, reps:'10-12', track:'weight', cat:'compound', lower:false, pattern:'pull', cue:'Pull the bar to your upper chest, lead with your elbows, control the return.', startW:{ratio:0.3, fallback:20}},
+      {id:'tue_tbarrow', name:'T-Bar Row', sets:3, reps:'8-10', track:'weight', cat:'compound', lower:false, pattern:'pull', cue:'Hinge forward, pull the handle to your chest, squeeze at the top.', startW:{ratio:0.3, fallback:20}},
+      {id:'tue_straightarm', name:'Straight-Arm Pulldown', sets:3, reps:'12-15', track:'weight', cat:'isolation', lower:false, pattern:'pull', cue:'Keep arms straight, pull the bar down to your thighs, feel your lats stretch.', startW:{ratio:0.08, fallback:10}},
+      {id:'tue_preacher', name:'Preacher Curl', sets:3, reps:'10-12', track:'weight', cat:'isolation', lower:false, pattern:'curl', cue:'Rest your arms on the pad, curl up fully, lower with control.', startW:{ratio:0.08, fallback:8}},
+      {id:'tue_concentration', name:'Concentration Curl', sets:3, reps:'12-15', track:'weight', cat:'isolation', lower:false, pattern:'curl', cue:'Elbow braced against your inner thigh, curl straight up, squeeze at the top.', startW:{ratio:0.04, fallback:5}},
+    ]},
+  3: { key:'wed', label:'Shoulders + Abs', why:"Chest gets a full rest day. Focus stays on delt width and core stability without chasing max loads.",
+    exercises:[
+      {id:'wed_ohp', name:'Seated DB Shoulder Press', sets:3, reps:'8-10', track:'weight', cat:'compound', lower:false, pattern:'push', cue:'Press dumbbells straight overhead until arms are extended, don\'t flare your ribs.', startW:{ratio:0.08, fallback:6}},
+      {id:'wed_lateral', name:'Dumbbell Lateral Raise', sets:4, reps:'12-15', track:'weight', cat:'isolation', lower:false, pattern:'raise', cue:'Lift dumbbells out to your sides to shoulder height, slight bend in elbows.', startW:{ratio:0.03, fallback:4}},
+      {id:'wed_facepull', name:'Cable Face Pull', sets:3, reps:'15', track:'weight', cat:'isolation', lower:false, pattern:'pull', cue:'Pull rope toward your face, elbows high, squeeze shoulder blades together.', startW:{ratio:0.08, fallback:10}},
+      {id:'wed_kneeraise', name:'Hanging Knee Raise', sets:3, reps:'15', track:'reps', cat:'bodyweight', lower:false, pattern:'curl', cue:'Hang from the bar, raise knees toward your chest without swinging.'},
+      {id:'wed_plank', name:'Plank Hold', sets:3, reps:'60s', track:'time', cat:'core', lower:false, pattern:'hold', cue:'Straight line from head to heels, brace your core, breathe steadily.'},
+      {id:'wed_arnold', name:'Arnold Press', sets:3, reps:'8-10', track:'weight', cat:'compound', lower:false, pattern:'push', cue:'Start palms facing you, rotate and press overhead until arms extend.', startW:{ratio:0.07, fallback:5}},
+      {id:'wed_frontraise', name:'Dumbbell Front Raise', sets:3, reps:'12-15', track:'weight', cat:'isolation', lower:false, pattern:'raise', cue:'Raise dumbbells straight out in front to shoulder height, lower with control.', startW:{ratio:0.025, fallback:3}},
+      {id:'wed_shrug', name:'Barbell Shrug', sets:3, reps:'12-15', track:'weight', cat:'isolation', lower:false, pattern:'pull', cue:'Shrug your shoulders straight up toward your ears, pause, lower slowly.', startW:{ratio:0.3, fallback:20}},
+      {id:'wed_russiantwist', name:'Russian Twist', sets:3, reps:'20', track:'reps', cat:'core', lower:false, pattern:'rotate', cue:'Lean back slightly, rotate the torso side to side, keep feet lifted for extra challenge.'},
+      {id:'wed_cablecrunch', name:'Cable Crunch', sets:3, reps:'15', track:'weight', cat:'isolation', lower:false, pattern:'curl', cue:'Kneel under the cable, crunch down bringing elbows toward your knees.', startW:{ratio:0.1, fallback:10}},
+    ]},
+  4: { key:'thu', label:'Legs', why:'Your biggest muscle group gets a dedicated, high-energy day — heavy lower body work drives the most overall growth.',
+    exercises:[
+      {id:'thu_squat', name:'Barbell Back Squat', sets:4, reps:'6-8', track:'weight', cat:'compound', lower:true, pattern:'squat', cue:'Sit hips back and down until thighs are parallel, drive up through your heels.', startW:{ratio:0.5, fallback:20}},
+      {id:'thu_rdl', name:'Romanian Deadlift', sets:3, reps:'8-10', track:'weight', cat:'compound', lower:true, pattern:'hinge', cue:'Push hips back, bar close to your legs, feel the hamstring stretch, stand tall.', startW:{ratio:0.4, fallback:25}},
+      {id:'thu_legpress', name:'Leg Press or Lunges', sets:3, reps:'10-12', track:'weight', cat:'compound', lower:true, pattern:'squat', cue:'Lower under control until knees reach about 90 degrees, press back up (lighter if lunges).', startW:{ratio:0.5, fallback:30}},
+      {id:'thu_calf', name:'Seated Calf Raise', sets:4, reps:'15', track:'weight', cat:'isolation', lower:true, pattern:'calf', cue:'Push through the balls of your feet, pause at the top, lower fully.', startW:{ratio:0.3, fallback:20}},
+      {id:'thu_walklunge', name:'Walking Lunges', sets:3, reps:'12 per leg', track:'weight', cat:'compound', lower:true, pattern:'squat', cue:'Step forward into a lunge, drive through the front heel to bring feet together.', startW:{ratio:0.1, fallback:8}},
+      {id:'thu_legext', name:'Leg Extension', sets:3, reps:'12-15', track:'weight', cat:'isolation', lower:true, pattern:'squat', cue:'Extend your legs fully, pause, lower under control without swinging.', startW:{ratio:0.3, fallback:20}},
+      {id:'thu_legcurl', name:'Lying Leg Curl', sets:3, reps:'12-15', track:'weight', cat:'isolation', lower:true, pattern:'hinge', cue:'Curl your heels toward your glutes, squeeze hamstrings, lower slowly.', startW:{ratio:0.25, fallback:15}},
+      {id:'thu_hipthrust', name:'Barbell Hip Thrust', sets:3, reps:'10-12', track:'weight', cat:'compound', lower:true, pattern:'hinge', cue:'Upper back on the bench, drive hips up until torso is level, squeeze glutes.', startW:{ratio:0.45, fallback:25}},
+      {id:'thu_standcalf', name:'Standing Calf Raise', sets:4, reps:'15-20', track:'weight', cat:'isolation', lower:true, pattern:'calf', cue:'Rise onto your toes as high as possible, pause, lower for a full stretch.', startW:{ratio:0.35, fallback:20}},
+      {id:'thu_gobletsquat', name:'Goblet Squat', sets:3, reps:'12-15', track:'weight', cat:'compound', lower:true, pattern:'squat', cue:'Hold a dumbbell at your chest, squat down between your knees, drive back up.', startW:{ratio:0.2, fallback:12}},
+    ]},
+  5: { key:'fri', label:'Chest + Triceps', why:'Second weekly session, different angles — keeps tension fresh for more growth without repeating Monday exactly.',
+    exercises:[
+      {id:'fri_inclinebar', name:'Incline Barbell Bench', sets:3, reps:'8-10', track:'weight', cat:'compound', lower:false, pattern:'push', cue:'Bar to upper chest, press up and slightly back over your face.', startW:{ratio:0.25, fallback:20}},
+      {id:'fri_flatdb', name:'Flat Dumbbell Press', sets:3, reps:'10-12', track:'weight', cat:'compound', lower:false, pattern:'push', cue:'Press dumbbells up until they nearly touch, lower until elbows are level with shoulders.', startW:{ratio:0.12, fallback:8}},
+      {id:'fri_flye', name:'Cable Chest Fly', sets:3, reps:'12-15', track:'weight', cat:'isolation', lower:false, pattern:'raise', cue:'Sweep handles together in front of your chest, slight bend in elbows.', startW:{ratio:0.05, fallback:5}},
+      {id:'fri_closegrip', name:'Close-Grip Bench Press', sets:3, reps:'8-10', track:'weight', cat:'compound', lower:false, pattern:'push', cue:'Hands shoulder-width, elbows tucked, press up while keeping them close to your torso.', startW:{ratio:0.25, fallback:20}},
+      {id:'fri_ropepush', name:'Tricep Rope Pushdown', sets:3, reps:'12-15', track:'weight', cat:'isolation', lower:false, pattern:'push', cue:'Elbows pinned, push the rope down and spread it apart at the bottom.', startW:{ratio:0.07, fallback:10}},
+      {id:'fri_pecdeck', name:'Pec Deck Fly', sets:3, reps:'12-15', track:'weight', cat:'isolation', lower:false, pattern:'raise', cue:'Bring your arms together in front of your chest, squeeze, control the release.', startW:{ratio:0.15, fallback:12}},
+      {id:'fri_declinebench', name:'Decline Bench Press', sets:3, reps:'8-10', track:'weight', cat:'compound', lower:false, pattern:'push', cue:'Lower the bar to your lower chest, press up and slightly back.', startW:{ratio:0.28, fallback:20}},
+      {id:'fri_overheadrope', name:'Overhead Rope Extension', sets:3, reps:'12-15', track:'weight', cat:'isolation', lower:false, pattern:'curl', cue:'Rope behind your head, extend arms overhead, keep elbows tucked in.', startW:{ratio:0.06, fallback:8}},
+      {id:'fri_benchdip', name:'Bench Dips', sets:3, reps:'15-20', track:'reps', cat:'bodyweight', lower:false, pattern:'push', cue:'Hands on the bench behind you, lower your hips, press back up.'},
+      {id:'fri_machinepress2', name:'Incline Machine Press', sets:3, reps:'10-12', track:'weight', cat:'compound', lower:false, pattern:'push', cue:'Press the handles up and forward, pause, control the negative.', startW:{ratio:0.2, fallback:15}},
+    ]},
+  6: { key:'sat', label:'Back + Biceps + Rear Delts', why:"Second back session. Chest-supported rows swap in for barbell work to spare a lower back that's still recovering from squats.",
+    exercises:[
+      {id:'sat_pullup', name:'Pull-Up or Chin-Up', sets:3, reps:'max', track:'reps', cat:'bodyweight', lower:false, pattern:'pull', cue:'Pull your chin over the bar, lower until arms are fully extended.'},
+      {id:'sat_supportedrow', name:'Chest-Supported Row', sets:3, reps:'8-10', track:'weight', cat:'compound', lower:false, pattern:'pull', cue:'Chest on the pad, pull elbows back and squeeze at the top.', startW:{ratio:0.3, fallback:20}},
+      {id:'sat_1armrow', name:'Single-Arm Dumbbell Row', sets:3, reps:'10-12', track:'weight', cat:'compound', lower:false, pattern:'pull', cue:'Flat back, pull the dumbbell to your hip, keep the elbow close.', startW:{ratio:0.12, fallback:8}},
+      {id:'sat_inclinecurl', name:'Incline Dumbbell Curl', sets:3, reps:'10-12', track:'weight', cat:'isolation', lower:false, pattern:'curl', cue:'Arms hanging straight down, curl up without swinging your shoulders forward.', startW:{ratio:0.06, fallback:6}},
+      {id:'sat_reverseflye', name:'Cable Reverse Fly', sets:4, reps:'15', track:'weight', cat:'isolation', lower:false, pattern:'raise', cue:'Pull handles out and back in a wide arc, squeeze shoulder blades together.', startW:{ratio:0.04, fallback:4}},
+      {id:'sat_rackpull', name:'Rack Pull', sets:3, reps:'6-8', track:'weight', cat:'compound', lower:true, pattern:'hinge', cue:'Bar just below knee height, drive hips forward to lock out standing tall.', startW:{ratio:0.5, fallback:30}},
+      {id:'sat_widepulldown2', name:'Close-Grip Lat Pulldown', sets:3, reps:'10-12', track:'weight', cat:'compound', lower:false, pattern:'pull', cue:'Pull the handle to your chest, elbows close, squeeze your lats at the bottom.', startW:{ratio:0.3, fallback:20}},
+      {id:'sat_zottman', name:'Zottman Curl', sets:3, reps:'10-12', track:'weight', cat:'isolation', lower:false, pattern:'curl', cue:'Curl up palms facing you, rotate palms down, lower slowly for the forearm.', startW:{ratio:0.06, fallback:6}},
+      {id:'sat_cablecurl', name:'Cable Curl', sets:3, reps:'12-15', track:'weight', cat:'isolation', lower:false, pattern:'curl', cue:'Elbows fixed at your sides, curl the bar up, squeeze at the top.', startW:{ratio:0.08, fallback:8}},
+      {id:'sat_reardeltmachine', name:'Rear Delt Machine Fly', sets:3, reps:'15', track:'weight', cat:'isolation', lower:false, pattern:'raise', cue:'Push the handles back and out, squeeze your rear delts, control the return.', startW:{ratio:0.1, fallback:10}},
+    ]},
+  0: { key:'sun', label:'Rest', why:'', exercises:[] }
+};
+
+const CUE_AM = {
+  mon_bench: 'ዘንግ(ባርቤል) ወደ ደረት መሀል ያምጡ፣ ክንዶች እስኪዘረጉ ድረስ ቀጥ ብለው ወደ ላይ ይግፉ።',
+  mon_incline_db: 'ደምበሎችን ወደ ላይ እና ትንሽ ወደ ውስጥ ይግፉ፣ ክርኖች ከመዝጋታቸው ትንሽ በፊት ያቁሙ።',
+  mon_dips: 'ትከሻዎች ከክርኖች ጋር እኩል እስኪሆኑ ድረስ ይውረዱ፣ ከዚያ ወደ ላይ ይግፉ።',
+  mon_ohe: 'ክብደቱን ከጭንቅላትዎ ጀርባ ያውርዱ፣ ክርኖችን በማቅናት ይዘርጉ።',
+  mon_pushdown: 'ክርኖች ከጎንዎ ተጣብቀው፣ ዘንጉን ወደ ታች ይግፉት፣ ክንዶች እስኪዘረጉ ድረስ።',
+  mon_crossover: 'እጆችን በክብ እንቅስቃሴ ወደ ታች እና ወደ መሀል ይጎትቱ፣ ከታች ደረትን ያጠንክሩ።',
+  mon_pushup: 'ሰውነት ቀጥ ያለ መስመር ይያዝ፣ ደረት ወደ መሬት ይውረድ፣ ከዚያ ወደ ላይ ይግፉ።',
+  mon_machinepress: 'ክንዶች እስኪዘረጉ ድረስ መያዣዎቹን ወደ ፊት ይግፉ፣ መመለሻውን በቁጥጥር ያድርጉ።',
+  mon_skullcrusher: 'ዘንጉን ወደ ግንባርዎ ያውርዱ፣ ክርኖች ሳይንቀሳቀሱ፣ መልሰው ይዘርጉ።',
+  mon_diamondpushup: 'እጆች ከደረት ስር ተጣብቀው፣ ወደ ታች ይውረዱ፣ ትራይሴፕስን ለማነጣጠር ወደ ላይ ይግፉ።',
+  tue_deadlift: 'ወገብን በማጠፍ፣ ጀርባ ቀጥ ብሎ፣ በተረከዝ ላይ በመንዳት ቁሙ (ፑልዳውን ማሽን ከሆነ ቀለል ያድርጉ)።',
+  tue_row: 'ወደ ፊት በማጠፍ፣ ዘንጉን ወደ ታችኛው ጎድን አጥንትዎ ይጎትቱ፣ የትከሻ ብሌዶችን ያቅርቡ።',
+  tue_cablerow: 'መያዣውን ወደ ደረትዎ ይጎትቱ፣ ክርኖች ተጣብቀው፣ ደረት ቀጥ ብሎ ይቆይ።',
+  tue_curl: 'ክርኖች ከጎንዎ ተስተካክለው፣ ዘንጉን ወደ ላይ ይጎትቱ፣ በቁጥጥር ያውርዱ።',
+  tue_hammer: 'መዳፎች ወደ ውስጥ ተመልክተው፣ ክርኖችን ሳያወዛውዙ ቀጥ ብለው ወደ ላይ ይጎትቱ።',
+  tue_widepulldown: 'ዘንጉን ወደ ላይኛው ደረትዎ ይጎትቱ፣ በክርኖች ይምሩ፣ መመለሻውን ይቆጣጠሩ።',
+  tue_tbarrow: 'ወደ ፊት በማጠፍ፣ መያዣውን ወደ ደረትዎ ይጎትቱ፣ ከላይ ያቅርቡ።',
+  tue_straightarm: 'ክንዶች ቀጥ ብለው ይቆዩ፣ ዘንጉን ወደ ጭናቸው ያውርዱ፣ የጀርባ ጡንቻዎን መዘርጋት ይሰማዎት።',
+  tue_preacher: 'እጆችዎን በፓድ ላይ ያሳርፉ፣ ሙሉ በሙሉ ወደ ላይ ይጎትቱ፣ በቁጥጥር ያውርዱ።',
+  tue_concentration: 'ክርኑ በውስጠኛው ጭንዎ ላይ ተደግፎ፣ ቀጥ ብሎ ወደ ላይ ይጎትቱ፣ ከላይ ያቅርቡ።',
+  wed_ohp: 'ደምበሎችን ክንዶች እስኪዘረጉ ድረስ ቀጥታ ወደ ላይ ይግፉ፣ የጎድን አጥንትዎን አያውጡ።',
+  wed_lateral: 'ደምበሎችን ወደ ጎንዎ እስከ ትከሻ ቁመት ድረስ ያንሱ፣ ክርኖች ትንሽ ታጥፈው ይቆዩ።',
+  wed_facepull: 'ገመዱን ወደ ፊትዎ ይጎትቱ፣ ክርኖች ከፍ ብለው፣ የትከሻ ብሌዶችን አንድ ላይ ያቅርቡ።',
+  wed_kneeraise: 'ከዘንጉ ላይ ተንጠልጥለው፣ ጉልበቶችን ወደ ደረትዎ ያንሱ ያለ መወዛወዝ።',
+  wed_plank: 'ከጭንቅላት እስከ ተረከዝ ቀጥ ያለ መስመር ይያዙ፣ ኮርዎን ያጠንክሩ፣ በስርዓት ይተንፍሱ።',
+  wed_arnold: 'መዳፎች ወደ እርስዎ ተመልክተው ይጀምሩ፣ በማዞር ወደ ላይ ክንዶች እስኪዘረጉ ድረስ ይግፉ።',
+  wed_frontraise: 'ደምበሎችን ቀጥ ብለው ወደ ፊት እስከ ትከሻ ቁመት ድረስ ያንሱ፣ በቁጥጥር ያውርዱ።',
+  wed_shrug: 'ትከሻዎችን ቀጥ ብለው ወደ ጆሮዎ ያንሱ፣ ትንሽ ቆይተው፣ ቀስ ብለው ያውርዱ።',
+  wed_russiantwist: 'ትንሽ ወደ ኋላ ተደግፈው፣ ግንዱን ወደ ግራና ቀኝ ያዙሩ፣ እግሮችን ከፍ አድርገው ይያዙ ለተጨማሪ ፈተና።',
+  wed_cablecrunch: 'ከገመዱ ስር ተንበርክከው፣ ክርኖችን ወደ ጉልበቶችዎ በማምጣት ወደ ታች ይጨምቁ።',
+  thu_squat: 'ወገብን ወደ ኋላና ወደ ታች ያድርጉ እስከ ጭኖቹ ትይዩ እስኪሆኑ ድረስ፣ በተረከዝ ላይ በመንዳት ወደ ላይ ይነሱ።',
+  thu_rdl: 'ወገብን ወደ ኋላ ይግፉ፣ ዘንጉ ከእግርዎ ጋር ተጠጋግቶ፣ የጭን ጡንቻ መዘርጋትን ይሰማዎት፣ ቀጥ ብለው ይቁሙ።',
+  thu_legpress: 'ጉልበቶች 90 ዲግሪ እስኪደርሱ ድረስ በቁጥጥር ያውርዱ፣ ወደ ላይ ይግፉ (ላንጅ ከሆነ ቀለል ያድርጉ)።',
+  thu_calf: 'በእግር ጣቶችዎ ኳስ ላይ ይግፉ፣ ከላይ ትንሽ ቆይተው፣ ሙሉ በሙሉ ያውርዱ።',
+  thu_walklunge: 'ወደ ፊት በላንጅ ይራመዱ፣ በፊተኛው ተረከዝ በመንዳት እግሮችን አንድ ላይ ያምጡ።',
+  thu_legext: 'እግሮችዎን ሙሉ በሙሉ ይዘርጉ፣ ትንሽ ቆይተው፣ ሳይወዛወዙ በቁጥጥር ያውርዱ።',
+  thu_legcurl: 'ተረከዞችዎን ወደ ዳሌዎ ይጎትቱ፣ የጭን ጡንቻን ያጠንክሩ፣ ቀስ ብለው ያውርዱ።',
+  thu_hipthrust: 'የላይኛው ጀርባ በወንበሩ ላይ፣ ግንዱ ትይዩ እስኪሆን ድረስ ዳሌን ወደ ላይ ይግፉ፣ ዳሌዎን ያጠንክሩ።',
+  thu_standcalf: 'በተቻለ መጠን በእግር ጣቶችዎ ላይ ከፍ ይበሉ፣ ትንሽ ቆይተው፣ ሙሉ ለሙሉ ይዘርጉ ያውርዱ።',
+  thu_gobletsquat: 'ደምበል በደረትዎ ላይ ይያዙ፣ በጉልበቶችዎ መካከል ወደ ታች ይቀመጡ፣ ወደ ኋላ ይንዱ ወደ ላይ።',
+  fri_inclinebar: 'ዘንጉን ወደ ላይኛው ደረት ያምጡ፣ ወደ ላይ እና ትንሽ ወደ ኋላ ፊትዎን አልፎ ይግፉ።',
+  fri_flatdb: 'ደምበሎችን ወደ ላይ ይግፉ ማለት ይነካኩ ድረስ፣ ክርኖች ከትከሻ ጋር እኩል እስኪሆኑ ድረስ ያውርዱ።',
+  fri_flye: 'መያዣዎቹን በደረትዎ ፊት ለፊት አንድ ላይ ያምጡ፣ ክርኖች ትንሽ ታጥፈው ይቆዩ።',
+  fri_closegrip: 'እጆች በትከሻ ስፋት፣ ክርኖች ተጣብቀው፣ ከግንድዎ ጋር ተጠጋግተው ወደ ላይ ይግፉ።',
+  fri_ropepush: 'ክርኖች ተጣብቀው፣ ገመዱን ወደ ታች ይግፉት እና ከታች ይለያዩት።',
+  fri_pecdeck: 'እጆችዎን በደረትዎ ፊት ለፊት አንድ ላይ ያምጡ፣ ያጠንክሩ፣ መልቀቁን ይቆጣጠሩ።',
+  fri_declinebench: 'ዘንጉን ወደ ታችኛው ደረትዎ ያውርዱ፣ ወደ ላይ እና ትንሽ ወደ ኋላ ይግፉ።',
+  fri_overheadrope: 'ገመዱ ከጭንቅላትዎ ጀርባ፣ ክንዶችን ወደ ላይ ይዘርጉ፣ ክርኖች ተጣብቀው ይቆዩ።',
+  fri_benchdip: 'እጆች ከኋላዎ በወንበሩ ላይ፣ ዳሌዎን ያውርዱ፣ ከዚያ ወደ ላይ ይግፉ።',
+  fri_machinepress2: 'መያዣዎቹን ወደ ላይና ወደ ፊት ይግፉ፣ ትንሽ ቆይተው፣ መመለሻውን ይቆጣጠሩ።',
+  sat_pullup: 'አገጭዎ ከዘንጉ በላይ እስኪደርስ ድረስ ይጎትቱ፣ ክንዶች ሙሉ በሙሉ እስኪዘረጉ ድረስ ያውርዱ።',
+  sat_supportedrow: 'ደረት በፓድ ላይ፣ ክርኖችን ወደ ኋላ ይጎትቱ እና ከላይ ያቅርቡ።',
+  sat_1armrow: 'ጀርባ ቀጥ ብሎ፣ ደምበሉን ወደ ወገብዎ ይጎትቱ፣ ክርኑ ተጠጋግቶ ይቆይ።',
+  sat_inclinecurl: 'እጆች ቀጥ ብለው ተንጠልጥለው፣ ትከሻዎችን ወደ ፊት ሳያወዛውዙ ወደ ላይ ይጎትቱ።',
+  sat_reverseflye: 'መያዣዎቹን በሰፊ ክብ እንቅስቃሴ ወደ ውጭና ወደ ኋላ ይጎትቱ፣ የትከሻ ብሌዶችን አንድ ላይ ያቅርቡ።',
+  sat_rackpull: 'ዘንጉ ከጉልበት በታች ትንሽ፣ ዳሌዎን ወደ ፊት በመንዳት ቀጥ ብለው ይቁሙ።',
+  sat_widepulldown2: 'መያዣውን ወደ ደረትዎ ይጎትቱ፣ ክርኖች ተጣብቀው፣ ከታች የጀርባ ጡንቻዎን ያጠንክሩ።',
+  sat_zottman: 'መዳፎች ወደ እርስዎ ተመልክተው ወደ ላይ ይጎትቱ፣ መዳፎችን ወደ ታች ያዙሩ፣ ለክንድ ጡንቻ ቀስ ብለው ያውርዱ።',
+  sat_cablecurl: 'ክርኖች ከጎንዎ ተስተካክለው፣ ዘንጉን ወደ ላይ ይጎትቱ፣ ከላይ ያቅርቡ።',
+  sat_reardeltmachine: 'መያዣዎቹን ወደ ኋላና ወደ ውጭ ይግፉ፣ የኋላ ትከሻ ጡንቻዎን ያጠንክሩ፣ መመለሻውን ይቆጣጠሩ።',
+};
+
+const memStore = {};
+let useMemory = false;
+
+function hasRealStorage(){
+  return typeof window.storage !== 'undefined' && window.storage && typeof window.storage.get === 'function';
+}
+function hasLocalStorage(){
+  try{
+    const t = '__test__';
+    localStorage.setItem(t,'1'); localStorage.removeItem(t);
+    return true;
+  }catch(e){ return false; }
+}
+
+async function getVal(key){
+  if(hasRealStorage() && !useMemory){
+    try{
+      const r = await window.storage.get(key, false);
+      return r ? JSON.parse(r.value) : null;
+    }catch(e){ /* fall through */ }
+  }
+  if(hasLocalStorage()){
+    const v = localStorage.getItem('logbook:'+key);
+    return v ? JSON.parse(v) : null;
+  }
+  return Object.prototype.hasOwnProperty.call(memStore,key) ? memStore[key] : null;
+}
+async function setVal(key, val){
+  if(hasRealStorage() && !useMemory){
+    try{ await window.storage.set(key, JSON.stringify(val), false); return; }
+    catch(e){ /* fall through */ }
+  }
+  if(hasLocalStorage()){
+    localStorage.setItem('logbook:'+key, JSON.stringify(val));
+    return;
+  }
+  memStore[key] = val;
+}
+async function listPrefix(prefix){
+  if(hasRealStorage() && !useMemory){
+    try{
+      const r = await window.storage.list(prefix, false);
+      if(r) return r.keys;
+    }catch(e){ /* fall through */ }
+  }
+  if(hasLocalStorage()){
+    const out = [];
+    for(let i=0;i<localStorage.length;i++){
+      const k = localStorage.key(i);
+      if(k && k.startsWith('logbook:'+prefix)) out.push(k.slice('logbook:'.length));
+    }
+    return out;
+  }
+  return Object.keys(memStore).filter(k=>k.startsWith(prefix));
+}
+async function deleteVal(key){
+  if(hasRealStorage() && !useMemory){
+    try{ await window.storage.delete(key, false); return; }catch(e){ /* fall through */ }
+  }
+  if(hasLocalStorage()){ localStorage.removeItem('logbook:'+key); return; }
+  delete memStore[key];
+}
+
+function dateOnly(d){ return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
+function isoDay(d){ return dateOnly(d).toISOString().slice(0,10); }
+
+async function getStart(){
+  const v = await getVal('program:start');
+  return v ? new Date(v) : null;
+}
+
+function dayIndexFor(start, date){
+  return Math.round((dateOnly(date) - dateOnly(start)) / DAY_MS);
+}
+
+function roundHalf(n){ return Math.round(n*2)/2; }
+
+function computeStartWeight(exercise, bodyweight){
+  if(!exercise.startW) return null;
+  const { ratio, fallback } = exercise.startW;
+  if(bodyweight && ratio){
+    return roundHalf(Math.max(bodyweight * ratio, 2));
+  }
+  return fallback;
+}
+
+function getEmbedHtml(url){
+  if(url && url.startsWith('data:video')){
+    // Locally uploaded video file, stored as a data URL.
+    return `<div class="video-embed"><video src="${url}" controls playsinline></video></div>`;
+  }
+  try{
+    const u = new URL(url);
+    const host = u.hostname.replace('www.','');
+    if(host === 'youtube.com' || host === 'youtu.be' || host === 'm.youtube.com'){
+      let vid = '';
+      if(host === 'youtu.be') vid = u.pathname.slice(1);
+      else if(u.searchParams.get('v')) vid = u.searchParams.get('v');
+      else if(u.pathname.includes('/shorts/')) vid = u.pathname.split('/shorts/')[1];
+      else if(u.pathname.includes('/embed/')) vid = u.pathname.split('/embed/')[1];
+      vid = (vid||'').split('&')[0].split('?')[0];
+      if(vid) return `<div class="video-embed yt"><iframe src="https://www.youtube.com/embed/${vid}" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`;
+    }
+    if(host === 'tiktok.com' || host === 'vm.tiktok.com' || host === 'vt.tiktok.com'){
+      const vidMatch = url.match(/\/video\/(\d+)/);
+      const vid = vidMatch ? vidMatch[1] : '';
+      if(vid){
+        // Direct iframe embed — no external script needed, so it actually loads and nothing can hijack a click.
+        return `<div class="video-embed tt"><iframe src="https://www.tiktok.com/embed/v2/${vid}" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`;
+      }
+      // Short links (vm.tiktok.com/vt.tiktok.com) don't carry the numeric video id, so a true embed isn't possible — just link out.
+      return `<div class="video-placeholder"><a href="${url}" target="_blank" rel="noopener" style="color:var(--accent);font-size:12px;">Open on TikTok ↗</a><div style="color:var(--ink-dim);font-size:10px;margin-top:4px;">Short links can't be embedded — paste the full tiktok.com/@user/video/… link to embed it here.</div></div>`;
+    }
+    if(host === 'vimeo.com'){
+      const vid = u.pathname.split('/').filter(Boolean)[0];
+      if(vid) return `<div class="video-embed vm"><iframe src="https://player.vimeo.com/video/${vid}" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`;
+    }
+    if(host === 'instagram.com'){
+      return `<div class="video-embed ig"><iframe src="${url.replace(/\/$/,'')}/embed" allowfullscreen loading="lazy"></iframe></div>`;
+    }
+    if(/\.(mp4|webm|mov)$/i.test(u.pathname)){
+      return `<div class="video-embed"><video src="${url}" controls playsinline></video></div>`;
+    }
+    return `<div class="video-placeholder"><a href="${url}" target="_blank" rel="noopener" style="color:var(--accent);font-size:12px;">Open video ↗</a></div>`;
+  }catch(e){
+    return `<div class="video-placeholder" style="color:var(--bad);font-size:11px;">Invalid link</div>`;
+  }
+}
+function suggestNext(exercise, lastLog, phase){
+  if(!lastLog) return null;
+  if(exercise.track === 'weight'){
+    let w = lastLog.value;
+    if(lastLog.feel === 'easy'){
+      let inc = exercise.cat === 'isolation' ? 1.25 : (exercise.lower ? 5 : 2.5);
+      if(phase === 'adaptation') inc = inc/2;
+      return { text: `Aim for ${roundHalf(w+inc)}kg`, value: roundHalf(w+inc) };
+    }
+    if(lastLog.feel === 'justright'){
+      return { text: `Same weight (${w}kg), try 1 more rep`, value: w };
+    }
+    return { text: `Drop slightly to ${roundHalf(Math.max(w-(exercise.lower?5:2.5),0))}kg`, value: roundHalf(Math.max(w-(exercise.lower?5:2.5),0)) };
+  }
+  if(exercise.track === 'reps'){
+    let r = lastLog.value;
+    if(lastLog.feel === 'easy') return { text: `Aim for ${r+1} reps`, value: r+1 };
+    if(lastLog.feel === 'justright') return { text: `Match ${r} reps, cleaner form`, value: r };
+    return { text: `Aim for ${Math.max(r-1,1)} solid reps`, value: Math.max(r-1,1) };
+  }
+  if(exercise.track === 'time'){
+    let s = lastLog.value;
+    if(lastLog.feel === 'easy') return { text: `Hold ${s+10}s`, value: s+10 };
+    return { text: `Match ${s}s`, value: s };
+  }
+  return null;
+}
+
+const BADGES = [
+  { threshold:1, label:'First Session', icon:'●' },
+  { threshold:5, label:'5 Sessions', icon:'▲' },
+  { threshold:15, label:'15 Sessions', icon:'■' },
+  { threshold:30, label:'30 Sessions', icon:'◆' },
+  { threshold:48, label:'Program Complete', icon:'★' },
+];
+
+async function computeStreakStats(start, todayIdx){
+  const keys = await listPrefix('attendance:');
+  const records = [];
+  for(const k of keys){
+    const idx = parseInt(k.split(':').pop(), 10);
+    const v = await getVal(k);
+    if(v) records.push({ idx, went: v.went });
+  }
+  const totalSessions = records.filter(r => r.went).length;
+  let streak = 0;
+  let idx = todayIdx;
+  while(idx >= 0){
+    const date = new Date(start.getTime() + idx*DAY_MS);
+    if(date.getDay() === 0){ idx--; continue; }
+    const rec = records.find(r => r.idx === idx);
+    if(rec && rec.went){ streak++; idx--; }
+    else if(rec && !rec.went){ break; }
+    else if(idx === todayIdx){ idx--; continue; }
+    else break;
+  }
+  return { streak, totalSessions };
+}
+
+async function getAllExercisesById(){
+  const map = {};
+  for(const key of Object.keys(PROGRAM)){
+    for(const ex of PROGRAM[key].exercises) map[ex.id] = ex;
+  }
+  for(const dk of ['mon','tue','wed','thu','fri','sat']){
+    const custom = (await getVal(`customex:${dk}`)) || [];
+    for(const ex of custom) map[ex.id] = ex;
+  }
+  return map;
+}
+
+async function findLastLog(exerciseId, beforeDayIndex){
+  const keys = await listPrefix(`exlog:${exerciseId}:`);
+  let best = null, bestIdx = -1;
+  for(const k of keys){
+    const idx = parseInt(k.split(':').pop(), 10);
+    if(idx < beforeDayIndex && idx > bestIdx){
+      bestIdx = idx;
+      const v = await getVal(k);
+      if(v) best = v;
+    }
+  }
+  return best;
+}
+
+let activeDayIndex = null;
+let activePillar = 'physical'; // physical | mental | financial | spiritual | court
+let activeSubTab = 'dashboard'; // dashboard | today | calendar
+
+async function render(){
+  const app = document.getElementById('app');
+  const start = await getStart();
+
+  if(!start){
+    app.innerHTML = `
+      <div class="start-screen">
+        <h1>Log Book</h1>
+        <p>An 8-week strength program: chest/triceps, back/biceps, shoulders/abs and legs — six days a week, Sunday off. Track every session and get a suggested weight for next time.</p>
+        <div class="bw-input">
+          <label>Your current bodyweight (kg) — used to suggest a safe starting weight per exercise</label>
+          <input type="number" id="bw-field" placeholder="e.g. 75">
+        </div>
+        <button class="start-btn" onclick="startProgram()">Start Day 1 Today</button>
+        <button class="skip-link" onclick="startProgram()">Skip — I'll pick my own weights</button>
+      </div>`;
+    return;
+  }
+
+  const today = new Date();
+  const todayIdx = dayIndexFor(start, today);
+  if(activeDayIndex === null) activeDayIndex = Math.max(0, Math.min(todayIdx, TOTAL_DAYS-1));
+
+  const week = Math.min(Math.floor(todayIdx/7)+1, WEEKS);
+  const phase = week <= 2 ? 'adaptation' : 'growth';
+  const pillarLabels = {general:'GENERAL', physical:'PHYSICAL', mental:'MENTAL', financial:'FINANCIAL', spiritual:'SPIRITUAL', court:'COURT'};
+
+  let html = `
+    <div class="brand">
+      <h1>PMFS <span>Log</span></h1>
+      <div class="meta">WEEK ${week} / ${WEEKS}<br>${pillarLabels[activePillar]}</div>
+    </div>
+  `;
+
+  if(activePillar === 'physical'){
+    html += `
+    <div class="phase-banner">
+      ${phase === 'adaptation'
+        ? '<b>Weeks 1-2:</b> keep 3-4 reps in reserve on every set. No set to failure yet — you\'re re-teaching your joints the movements.'
+        : '<b>Weeks 3-8:</b> push your last set close to failure (1-2 reps in reserve). Increase weight only when a set feels easy.'}
+    </div>`;
+  }
+
+  html += `
+    <div class="tabs">
+      <div class="tab tab-general ${activePillar==='general'?'active':''}" onclick="setPillar('general')">★ General</div>
+    </div>
+    <div class="tabs">
+      <div class="tab ${activePillar==='physical'?'active':''}" onclick="setPillar('physical')">P · Physical</div>
+      <div class="tab ${activePillar==='mental'?'active':''}" onclick="setPillar('mental')">M · Mental</div>
+      <div class="tab ${activePillar==='financial'?'active':''}" onclick="setPillar('financial')">F · Financial</div>
+      <div class="tab ${activePillar==='spiritual'?'active':''}" onclick="setPillar('spiritual')">S · Spiritual</div>
+    </div>
+    <div class="tabs">
+      <div class="tab tab-court ${activePillar==='court'?'active':''}" onclick="setPillar('court')">⚖ Constitutional Court</div>
+    </div>
+  `;
+
+  if(activePillar === 'general'){
+    html += await renderGeneralDashboard(start, todayIdx, week);
+  } else if(activePillar === 'court'){
+    html += await renderCourt();
+  } else {
+    html += `
+      <div class="tabs subtabs">
+        <div class="tab ${activeSubTab==='dashboard'?'active':''}" onclick="setSubTab('dashboard')">Dashboard</div>
+        <div class="tab ${activeSubTab==='today'?'active':''}" onclick="setSubTab('today')">Today</div>
+        <div class="tab ${activeSubTab==='calendar'?'active':''}" onclick="setSubTab('calendar')">Calendar</div>
+      </div>
+    `;
+    if(activePillar === 'physical'){
+      if(activeSubTab === 'today') html += await renderDay(start, activeDayIndex, todayIdx, phase);
+      else if(activeSubTab === 'calendar') html += await renderCalendar(start, todayIdx);
+      else html += await renderDashboard(start, todayIdx, week);
+    } else {
+      if(activeSubTab === 'today') html += await renderPillarToday(activePillar, start, activeDayIndex, todayIdx, week);
+      else if(activeSubTab === 'calendar') html += await renderPillarCalendar(activePillar, start, todayIdx);
+      else html += await renderPillarDashboard(activePillar, start, todayIdx, week);
+    }
+  }
+
+  html += `<div class="footer-actions"><button class="reset" onclick="resetProgram()">Reset program</button></div>`;
+  app.innerHTML = html;
+  app.className = `wrap theme-${activePillar}`;
+}
+
+function dayTypeFor(date){ return date.getDay(); }
+
+async function renderDay(start, dayIdx, todayIdx, phase){
+  const date = new Date(start.getTime() + dayIdx*DAY_MS);
+  const dtype = dayTypeFor(date);
+  const prog = PROGRAM[dtype];
+  const locked = false;
+  const dateLabel = date.toLocaleDateString(undefined, {weekday:'long', month:'short', day:'numeric'});
+
+  if(prog.key === 'sun'){
+    return `<div class="card rest-card">
+      <div class="chalk">—</div>
+      <h2 style="text-transform:uppercase;">Rest Day</h2>
+      <p>${dateLabel}. Muscles grow during recovery, not during the workout. Sleep and let the tissue rebuild.</p>
+    </div>`;
+  }
+
+  let attendance = await getVal(`attendance:${dayIdx}`);
+
+  const bodyweight = await getVal('user:bodyweight');
+  const removedIds = (await getVal(`removedex:${prog.key}`)) || [];
+  const customExercises = (await getVal(`customex:${prog.key}`)) || [];
+  const favorites = (await getVal('favorites')) || [];
+  const exerciseList = prog.exercises.filter(e => !removedIds.includes(e.id)).concat(customExercises);
+  const restSeconds = 90;
+
+  let exHtml = '';
+  for(const ex of exerciseList){
+    const log = await getVal(`exlog:${ex.id}:${dayIdx}`);
+    const lastLog = await findLastLog(ex.id, dayIdx);
+    const suggestion = suggestNext(ex, lastLog, phase);
+    const startW = computeStartWeight(ex, bodyweight);
+    const unit = ex.track === 'weight' ? 'kg' : (ex.track === 'time' ? 'sec' : 'reps');
+    const placeholder = ex.track === 'weight' ? 'weight' : (ex.track === 'time' ? 'seconds' : 'reps done');
+    const videoUrl = await getVal(`video:${ex.id}`);
+    const isCustom = !!ex.custom;
+    const isFav = favorites.includes(ex.id);
+
+    exHtml += `
+      <div class="ex" id="ex-${ex.id}">
+        <div class="ex-top">
+          <div class="ex-name">
+            <button class="fav-star ${isFav?'on':''}" title="Favorite" onclick="toggleFavorite('${ex.id}')">${isFav?'★':'☆'}</button>
+            ${ex.name}
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <div class="ex-target">${ex.sets}x${ex.reps}</div>
+            <button class="ex-remove" title="Remove exercise" onclick="removeExercise('${prog.key}','${ex.id}',${isCustom})">✕</button>
+          </div>
+        </div>
+        <div class="ex-body">
+          <div class="video-box">
+            ${videoUrl ? `
+              ${getEmbedHtml(videoUrl)}
+              <button class="video-change" onclick="removeVideo('${ex.id}')">Change video</button>
+            ` : `
+              <div class="video-placeholder">
+                <input type="text" id="vurl-${ex.id}" placeholder="Paste TikTok/YouTube link">
+                <button type="button" onclick="saveVideo('${ex.id}')">Add</button>
+                <div class="video-or">or</div>
+                <label class="video-upload-btn">
+                  📁 Upload video file
+                  <input type="file" accept="video/*" style="display:none" onchange="saveVideoFile('${ex.id}', this)">
+                </label>
+              </div>
+            `}
+          </div>
+          <div style="flex:1;">
+            ${ex.cue ? `<div class="cue">${ex.cue}${CUE_AM[ex.id] ? `<br><span lang="am">🇪🇹 ${CUE_AM[ex.id]}</span>` : ''}</div>` : ''}
+            ${!lastLog && startW ? `<div class="start-weight">Try around ${startW}kg to start — leave 2-3 reps in reserve on your first set, adjust right away if it's off.</div>` : ''}
+            ${!lastLog && !startW && ex.track!=='weight' ? `<div class="ex-sub">First time — go at a controlled pace and stop a couple reps shy of your limit.</div>` : ''}
+            ${suggestion ? `<div class="suggestion">Last time: ${lastLog.value}${unit==='reps'?' reps':unit==='sec'?'s':unit}${lastLog.reps?` × ${lastLog.reps} reps`:''} (${lastLog.feel==='easy'?'easy':lastLog.feel==='justright'?'just right':'hard'}). <b>${suggestion.text}</b></div>` : ''}
+            ${log ? `
+              <div class="ex-row"><span class="logged-tag">✓ Logged: ${log.value}${unit==='reps'?' reps':unit==='sec'?'s':unit}${log.reps?` × ${log.reps} reps`:''} — ${log.feel==='easy'?'easy':log.feel==='justright'?'just right':'hard'}</span></div>
+            ` : `
+              <div class="ex-row">
+                <input type="number" step="0.5" id="val-${ex.id}" placeholder="${placeholder}">
+                ${ex.track==='weight' ? `<input type="number" step="1" id="reps-${ex.id}" placeholder="reps" style="width:60px;">` : ''}
+                <span class="unit">${unit}</span>
+                <div class="feel-btns">
+                  <div class="feel sel-easy" data-ex="${ex.id}" data-feel="easy" onclick="selectFeel('${ex.id}','easy')">Easy</div>
+                  <div class="feel sel-justright" data-ex="${ex.id}" data-feel="justright" onclick="selectFeel('${ex.id}','justright')">Just right</div>
+                  <div class="feel sel-hard" data-ex="${ex.id}" data-feel="hard" onclick="selectFeel('${ex.id}','hard')">Hard</div>
+                </div>
+                <button class="log-btn" onclick="logExercise('${ex.id}', ${dayIdx})">Log</button>
+                <button class="log-btn" style="background:var(--surface-2);color:var(--ink-dim);" onclick="quickRest(${restSeconds})">⏱ Rest</button>
+              </div>
+            `}
+          </div>
+        </div>
+      </div>
+    `;
+  }
+
+  return `
+    <div class="card">
+      <div class="day-head">
+        <h2>${prog.label}</h2>
+        <div class="badge">${dateLabel}</div>
+      </div>
+      <div class="why">${prog.why}</div>
+      ${exHtml}
+      <button class="add-ex-btn" onclick="toggleAddForm('${prog.key}')">+ Add exercise</button>
+      <div class="add-ex-form" id="addform-${prog.key}">
+        <input type="text" id="newex-name-${prog.key}" placeholder="Exercise name">
+        <div class="row2">
+          <input type="number" id="newex-sets-${prog.key}" placeholder="Sets" value="3">
+          <input type="text" id="newex-reps-${prog.key}" placeholder="Reps (e.g. 8-12)" value="8-12">
+        </div>
+        <select id="newex-track-${prog.key}">
+          <option value="weight">Log weight (kg)</option>
+          <option value="reps">Log reps only</option>
+          <option value="time">Log seconds (hold)</option>
+        </select>
+        <input type="text" id="newex-cue-${prog.key}" placeholder="Form cue (optional)">
+        <div class="actions">
+          <button class="save" onclick="addExercise('${prog.key}')">Add</button>
+          <button class="cancel" onclick="toggleAddForm('${prog.key}')">Cancel</button>
+        </div>
+      </div>
+      <div class="ex-row" style="border-top:1px solid var(--border);padding-top:14px;margin-top:14px;">
+        ${attendance ? `<span class="logged-tag">✓ Marked as trained</span>` :
+          locked ? `<span class="unit" style="opacity:.5;">Not yet</span>` :
+          `<button class="log-btn" onclick="markAttendance(${dayIdx}, true)">Mark day as trained</button>
+           <button class="log-btn" style="background:var(--surface-2);color:var(--ink-dim);" onclick="markAttendance(${dayIdx}, false)">Mark as missed</button>`}
+      </div>
+    </div>
+  `;
+}
+
+async function renderDashboard(start, todayIdx, week){
+  const bodyweight = await getVal('user:bodyweight');
+  const weightLog = ((await getVal('weightlog')) || []).slice().sort((a,b)=>a.week-b.week);
+  const currentDow = new Date().getDay();
+  const order = [1,2,3,4,5,6,0];
+  const schedHtml = order.map(d=>{
+    const p = PROGRAM[d];
+    const isToday = d === currentDow;
+    return `<li class="${isToday?'today-row':''}"><span class="d">${DAY_NAMES[d].slice(0,3)}</span><span class="g">${p.label}</span></li>`;
+  }).join('');
+
+  let statsHtml = '', chartHtml = '';
+  if(weightLog.length >= 1){
+    const startW = bodyweight || weightLog[0].weight;
+    const latest = weightLog[weightLog.length-1].weight;
+    const lost = roundHalf(startW - latest);
+    statsHtml = `
+      <div class="weight-stats">
+        <div class="wstat"><div class="num">${startW}</div><div class="lbl">Start kg</div></div>
+        <div class="wstat"><div class="num">${latest}</div><div class="lbl">Latest kg</div></div>
+        <div class="wstat"><div class="num">${lost>=0?'−':'+'}${Math.abs(lost)}</div><div class="lbl">${lost>=0?'Lost':'Gained'}</div></div>
+      </div>`;
+  }
+  if(weightLog.length >= 2){
+    const weights = weightLog.map(s=>s.weight);
+    const min = Math.min(...weights), max = Math.max(...weights);
+    const range = (max-min) || 1;
+    const W=640, H=140, PAD=20;
+    const stepX = (W-2*PAD)/(weightLog.length-1);
+    const points = weightLog.map((s,i)=>{
+      const x = PAD + i*stepX;
+      const y = H-PAD - ((s.weight-min)/range)*(H-2*PAD);
+      return [x,y];
+    });
+    const path = points.map((p,i)=>(i===0?'M':'L')+p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ');
+    const dots = points.map(p=>`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="4" fill="#f2f2f0"/>`).join('');
+    chartHtml = `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:140px;overflow:visible;">
+      <path d="${path}" fill="none" stroke="#f2f2f0" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+      ${dots}
+    </svg>`;
+  } else {
+    chartHtml = `<div class="chart-empty">Log your weight for at least 2 weeks to see the trend line.</div>`;
+  }
+
+  const todos = (await getVal('todos')) || [];
+  const todoHtml = todos.length ? todos.map(t=>`
+    <li class="todo-item ${t.done?'done':''}">
+      <div class="todo-check" onclick="toggleTodo('${t.id}')">${t.done?'✓':''}</div>
+      <div style="flex:1;">
+        <div class="todo-label" onclick="toggleTodo('${t.id}')">${escapeHtml(t.text)}</div>
+        ${todoMetaHtml(t)}
+      </div>
+      <button class="todo-del" onclick="deleteTodo('${t.id}')">✕</button>
+    </li>`).join('') : `<div class="todo-empty">Nothing on your list yet.</div>`;
+
+  const { streak, totalSessions } = await computeStreakStats(start, todayIdx);
+  const badgesHtml = BADGES.map(b=>{
+    const unlocked = totalSessions >= b.threshold;
+    return `<div class="badge-tile ${unlocked?'unlocked':''}"><div class="badge-icon">${b.icon}</div><div class="badge-label">${b.label}</div></div>`;
+  }).join('');
+
+  const favorites = (await getVal('favorites')) || [];
+  const exMap = await getAllExercisesById();
+  const favHtml = favorites.length ? favorites.map(id=>{
+    const ex = exMap[id];
+    if(!ex) return '';
+    return `<li><div><div class="fname">${ex.name}</div>${ex.cue ? `<div class="fcue">${ex.cue}${CUE_AM[ex.id] ? `<br>🇪🇹 ${CUE_AM[ex.id]}` : ''}</div>` : ''}</div><button class="fav-remove" onclick="toggleFavorite('${id}')">✕</button></li>`;
+  }).join('') : `<div class="todo-empty">Star an exercise on any day to pin it here.</div>`;
+
+  return `
+    <div class="quote-card">
+      <div class="quote-text">${SESSION_QUOTE.text}</div>
+      <div class="quote-author">— ${SESSION_QUOTE.author}</div>
+    </div>
+    <div class="card">
+      <div class="section-title">Streak</div>
+      <div class="weight-stats">
+        <div class="wstat"><div class="num">${streak}</div><div class="lbl">Day Streak</div></div>
+        <div class="wstat"><div class="num">${totalSessions}</div><div class="lbl">Total Sessions</div></div>
+      </div>
+      <div class="badges-grid">${badgesHtml}</div>
+    </div>
+    <div class="card">
+      <div class="section-title">This week's schedule</div>
+      <ul class="sched-list">${schedHtml}</ul>
+    </div>
+    <div class="card">
+      <div class="section-title">Weight progress · Week ${week}</div>
+      <div class="weight-log-row">
+        <input type="number" step="0.1" id="weekweight" placeholder="This week's weight (kg)">
+        <button onclick="logWeeklyWeight(${week})">Log</button>
+      </div>
+      ${statsHtml}
+      ${chartHtml}
+    </div>
+    <div class="card">
+      <div class="section-title">Favorites</div>
+      <ul class="fav-list">${favHtml}</ul>
+    </div>
+    <div class="card">
+      <div class="section-title">To-do</div>
+      <div class="todo-add-extra">
+        <input type="time" id="todo-time">
+        <input type="text" id="todo-note" placeholder="Explanation / why (optional)">
+      </div>
+      <div class="todo-add">
+        <input type="text" id="todo-input" placeholder="Add a task..." onkeydown="if(event.key==='Enter'){addTodo();}">
+        <button onclick="addTodo()">+</button>
+      </div>
+      <ul class="todo-list">${todoHtml}</ul>
+    </div>
+  `;
+}
+
+async function renderCalendar(start, todayIdx){
+  let html = '';
+  for(let w=0; w<WEEKS; w++){
+    html += `<div class="weeklabel">Week ${w+1}</div><div class="grid">`;
+    for(let d=0; d<7; d++){
+      const idx = w*7+d;
+      const date = new Date(start.getTime() + idx*DAY_MS);
+      const dtype = dayTypeFor(date);
+      const prog = PROGRAM[dtype];
+      const isFuture = idx > todayIdx;
+      const isToday = idx === todayIdx;
+      const att = await getVal(`attendance:${idx}`);
+      let mark = '·';
+      if(prog.key === 'sun'){ mark = '—'; }
+      else if(att && att.went) mark = '✓';
+      else if(att && !att.went) mark = '✕';
+      else if(!isFuture) mark = '?';
+
+      html += `<div class="gcell ${isToday?'today':''}" onclick="openDay(${idx})">
+        <div class="dlabel">${prog.key}</div>
+        <div class="mark" style="color:${mark==='✓'?'var(--good)':mark==='✕'?'var(--bad)':'var(--ink-dim)'}">${mark}</div>
+      </div>`;
+    }
+    html += `</div>`;
+  }
+  return html;
+}
+
+// ── Generic Pillar Modules (Mental / Financial / Spiritual) ───────────────
+const PILLARS = {
+  mental: {
+    label: 'Mental',
+    tagline: 'Reading, skill-building, and self-education — the M in PMFS.',
+    dailyTasks: [
+      { id:'m_read', label:'Read (book progress or notes)' },
+      { id:'m_skill', label:'Learn one practical non-academic skill' },
+      { id:'m_think', label:'Critical thinking / problem-solving practice' },
+      { id:'m_edu', label:'Continuous self-education session' },
+    ],
+    weeklyTasks: [],
+    targets: [
+      'Read, finish, and write notes on 2-4 targeted books this summer.',
+      'Learn one practical, non-academic skill every day.',
+    ],
+  },
+  financial: {
+    label: 'Financial',
+    tagline: 'Content, money discipline, and brand-building — the F in PMFS.',
+    dailyTasks: [
+      { id:'f_nospend', label:'No unnecessary spending today' },
+      { id:'f_content', label:'Content creation / video editing skill work' },
+    ],
+    weeklyTasks: [
+      { id:'f_study', label:'Study top creators (30 min)' },
+    ],
+    targets: [
+      'Save before spending. Zero unnecessary debt.',
+      'Upload 8-12 high-quality videos this summer.',
+      'Master one new advanced video editing skill every week.',
+    ],
+  },
+  spiritual: {
+    label: 'Spiritual',
+    tagline: 'Faith, prayer, and reflection — the S in PMFS.',
+    dailyTasks: [
+      { id:'s_prayer', label:'Morning prayer' },
+      { id:'s_reflect', label:'Scriptural reflection' },
+      { id:'s_live', label:'Live out the principles today' },
+    ],
+    weeklyTasks: [
+      { id:'s_church', label:'Church attendance this week' },
+    ],
+    targets: [
+      'Achieve a perfect 100% church attendance record.',
+      'Complete daily structured prayer and reflection.',
+    ],
+  },
+};
+
+async function getPillarDayTasks(pillar, dayIdx){
+  return (await getVal(`ptask:${pillar}:${dayIdx}`)) || [];
+}
+async function getPillarWeekTasks(pillar, week){
+  return (await getVal(`pweek:${pillar}:${week}`)) || [];
+}
+
+window.togglePillarDayTask = async function(pillar, dayIdx, taskId){
+  const list = await getPillarDayTasks(pillar, dayIdx);
+  const idx = list.indexOf(taskId);
+  if(idx >= 0) list.splice(idx, 1); else list.push(taskId);
+  await setVal(`ptask:${pillar}:${dayIdx}`, list);
+  render();
+};
+
+window.togglePillarWeekTask = async function(pillar, week, taskId){
+  const list = await getPillarWeekTasks(pillar, week);
+  const idx = list.indexOf(taskId);
+  if(idx >= 0) list.splice(idx, 1); else list.push(taskId);
+  await setVal(`pweek:${pillar}:${week}`, list);
+  render();
+};
+
+async function isPillarDayComplete(pillar, dayIdx){
+  const def = PILLARS[pillar];
+  const done = await getPillarDayTasks(pillar, dayIdx);
+  return def.dailyTasks.every(t => done.includes(t.id));
+}
+
+async function computePillarStats(pillar, todayIdx){
+  const def = PILLARS[pillar];
+  const keys = await listPrefix(`ptask:${pillar}:`);
+  const doneIdxs = new Set();
+  for(const k of keys){
+    const dIdx = parseInt(k.split(':').pop(), 10);
+    const rec = (await getVal(k)) || [];
+    if(def.dailyTasks.every(t => rec.includes(t.id))) doneIdxs.add(dIdx);
+  }
+  const totalDays = doneIdxs.size;
+  let streak = 0, idx = todayIdx;
+  while(idx >= 0){
+    if(doneIdxs.has(idx)){ streak++; idx--; }
+    else if(idx === todayIdx){ idx--; continue; }
+    else break;
+  }
+  return { streak, totalDays };
+}
+
+// ── General (all 4 pillars combined) ──────────────────────────────────────
+async function computeAllPillarStats(start, todayIdx){
+  const elapsedDays = todayIdx + 1;
+  const physical = await computeStreakStats(start, todayIdx);
+  const mental = await computePillarStats('mental', todayIdx);
+  const financial = await computePillarStats('financial', todayIdx);
+  const spiritual = await computePillarStats('spiritual', todayIdx);
+  const pct = n => elapsedDays > 0 ? Math.min(100, Math.round((n/elapsedDays)*100)) : 0;
+  return {
+    physical: { label:'Physical', streak: physical.streak, total: physical.totalSessions, pct: pct(physical.totalSessions) },
+    mental: { label:'Mental', streak: mental.streak, total: mental.totalDays, pct: pct(mental.totalDays) },
+    financial: { label:'Financial', streak: financial.streak, total: financial.totalDays, pct: pct(financial.totalDays) },
+    spiritual: { label:'Spiritual', streak: spiritual.streak, total: spiritual.totalDays, pct: pct(spiritual.totalDays) },
+  };
+}
+
+async function isPerfectDay(start, idx){
+  const date = new Date(start.getTime() + idx*DAY_MS);
+  const isRest = dayTypeFor(date) === 0;
+  let physicalOk = true;
+  if(!isRest){
+    const att = await getVal(`attendance:${idx}`);
+    physicalOk = !!(att && att.went);
+  }
+  const mentalOk = await isPillarDayComplete('mental', idx);
+  const financialOk = await isPillarDayComplete('financial', idx);
+  const spiritualOk = await isPillarDayComplete('spiritual', idx);
+  return physicalOk && mentalOk && financialOk && spiritualOk;
+}
+
+async function computePerfectDayStats(start, todayIdx){
+  let totalPerfect = 0;
+  for(let idx=0; idx<=todayIdx; idx++){
+    if(await isPerfectDay(start, idx)) totalPerfect++;
+  }
+  let streak = 0, idx = todayIdx;
+  while(idx >= 0){
+    if(await isPerfectDay(start, idx)){ streak++; idx--; }
+    else if(idx === todayIdx){ idx--; continue; }
+    else break;
+  }
+  return { streak, totalPerfect };
+}
+
+function renderGeneralBarChart(stats){
+  const order = ['physical','mental','financial','spiritual'];
+  const colors = { physical:'#e5e5e5', mental:'#ef4444', financial:'#3b82f6', spiritual:'#22c55e' };
+  const W = 300, H = 110, PAD = 20, barW = 34;
+  const gap = (W - 2*PAD - order.length*barW) / (order.length-1);
+  let bars = '';
+  order.forEach((key, i)=>{
+    const s = stats[key];
+    const barH = Math.max(2, (s.pct/100) * (H-2*PAD));
+    const x = PAD + i*(barW+gap);
+    const y = H-PAD-barH;
+    bars += `
+      <rect x="${x}" y="${y}" width="${barW}" height="${barH}" rx="4" fill="${colors[key]}"/>
+      <text x="${x+barW/2}" y="${y-5}" text-anchor="middle" font-size="10" font-weight="700" fill="${colors[key]}" font-family="var(--mono)">${s.pct}%</text>
+      <text x="${x+barW/2}" y="${H-PAD+13}" text-anchor="middle" font-size="9" fill="var(--ink-dim)" font-family="var(--mono)">${s.label[0]}</text>
+    `;
+  });
+  const legend = order.map(key => `
+    <span class="gen-legend-item">
+      <span class="gen-legend-dot" style="background:${colors[key]};"></span>${stats[key].label} · ${stats[key].streak}d
+    </span>`).join('');
+  return `
+    <div class="gen-chart-box">
+      <svg viewBox="0 0 ${W} ${H}" style="width:100%;height:110px;overflow:visible;">
+        <line x1="${PAD}" y1="${H-PAD}" x2="${W-PAD}" y2="${H-PAD}" stroke="rgba(139,92,246,0.25)" stroke-width="1"/>
+        ${bars}
+      </svg>
+    </div>
+    <div class="gen-legend">${legend}</div>
+  `;
+}
+
+async function renderGeneralHeatmap(start, todayIdx){
+  const dotColor = { physical:'#e5e5e5', mental:'#ef4444', financial:'#3b82f6', spiritual:'#22c55e' };
+  let html = '';
+  for(let w=0; w<WEEKS; w++){
+    html += `<div class="hm-weeklabel">Week ${w+1}</div><div class="hm-grid">`;
+    for(let d=0; d<7; d++){
+      const idx = w*7+d;
+      const isFuture = idx > todayIdx;
+      const date = new Date(start.getTime() + idx*DAY_MS);
+      const isRest = dayTypeFor(date) === 0;
+      let physicalDone = isRest, mentalDone = false, financialDone = false, spiritualDone = false;
+      if(!isFuture){
+        if(!isRest){ const att = await getVal(`attendance:${idx}`); physicalDone = !!(att && att.went); }
+        mentalDone = await isPillarDayComplete('mental', idx);
+        financialDone = await isPillarDayComplete('financial', idx);
+        spiritualDone = await isPillarDayComplete('spiritual', idx);
+      }
+      const allDone = !isFuture && physicalDone && mentalDone && financialDone && spiritualDone;
+      const dot = (on, color) => `<span class="hm-dot" style="background:${on?color:'transparent'};border-color:${color};"></span>`;
+      const dots = dot(!isFuture && physicalDone, dotColor.physical)
+        + dot(!isFuture && mentalDone, dotColor.mental)
+        + dot(!isFuture && financialDone, dotColor.financial)
+        + dot(!isFuture && spiritualDone, dotColor.spiritual);
+      const isToday = idx === todayIdx;
+      html += `<div class="hm-cell ${isFuture?'future':''} ${allDone?'perfect':''} ${isToday?'today':''}" title="${date.toDateString()}">${dots}</div>`;
+    }
+    html += `</div>`;
+  }
+  return html;
+}
+
+async function renderGeneralWeekGrid(start, todayIdx){
+  const order = ['physical','mental','financial','spiritual'];
+  const shortLabel = {physical:'P', mental:'M', financial:'F', spiritual:'S'};
+  const startIdx = Math.max(0, todayIdx-6);
+  const days = [];
+  for(let idx=startIdx; idx<=todayIdx; idx++) days.push(idx);
+  const gridCols = `28px repeat(${days.length}, 1fr)`;
+
+  const dayLabelCells = days.map(idx=>{
+    const d = new Date(start.getTime() + idx*DAY_MS);
+    return `<div class="gen-day-label">${d.toLocaleDateString(undefined,{weekday:'short'}).slice(0,2)}</div>`;
+  }).join('');
+
+  let rows = `<div class="gen-row" style="grid-template-columns:${gridCols};"><div class="gen-row-label"></div>${dayLabelCells}</div>`;
+  for(const pillar of order){
+    let cells = '';
+    for(const idx of days){
+      let mark = '·', color = 'var(--ink-dim)';
+      if(pillar === 'physical'){
+        const att = await getVal(`attendance:${idx}`);
+        if(att) { mark = att.went ? '✓' : '✕'; color = att.went ? 'var(--purple)' : 'var(--bad)'; }
+      } else {
+        const done = await getPillarDayTasks(pillar, idx);
+        if(done.length){
+          const complete = await isPillarDayComplete(pillar, idx);
+          mark = complete ? '✓' : '~';
+          color = complete ? 'var(--purple)' : 'var(--ink-dim)';
+        }
+      }
+      cells += `<div class="gen-cell" style="color:${color}">${mark}</div>`;
+    }
+    rows += `<div class="gen-row" style="grid-template-columns:${gridCols};"><div class="gen-row-label">${shortLabel[pillar]}</div>${cells}</div>`;
+  }
+  return `<div class="gen-grid">${rows}</div>`;
+}
+
+async function renderYesterdayNudge(start, todayIdx){
+  const yIdx = todayIdx - 1;
+  if(yIdx < 0) return '';
+  const dismissed = await getVal(`nudge-dismissed:${yIdx}`);
+  if(dismissed) return '';
+
+  const date = new Date(start.getTime() + yIdx*DAY_MS);
+  const isRest = dayTypeFor(date) === 0;
+  const missed = [];
+  if(!isRest){
+    const att = await getVal(`attendance:${yIdx}`);
+    if(!(att && att.went)) missed.push({ label:'Physical', jump:`openDay(${yIdx})` });
+  }
+  for(const p of ['mental','financial','spiritual']){
+    const complete = await isPillarDayComplete(p, yIdx);
+    if(!complete) missed.push({ label: PILLARS[p].label, jump:`openPillarDay('${p}',${yIdx})` });
+  }
+
+  if(missed.length === 0){
+    return `<div class="card gen-card nudge-card">
+      <button class="nudge-dismiss" onclick="dismissNudge(${yIdx})" title="Dismiss">✕</button>
+      <div class="section-title" style="color:var(--purple);">Yesterday</div>
+      <div class="nudge-msg">🎉 Perfect day yesterday — all 4 pillars hit. Keep it going.</div>
+    </div>`;
+  }
+  const btns = missed.map(m => `<button class="nudge-btn" onclick="${m.jump}">Fix ${m.label}</button>`).join('');
+  return `<div class="card gen-card nudge-card">
+    <button class="nudge-dismiss" onclick="dismissNudge(${yIdx})" title="Dismiss">✕</button>
+    <div class="section-title" style="color:var(--purple);">Yesterday's Gaps</div>
+    <div class="nudge-msg">You missed: ${missed.map(m=>m.label).join(', ')}</div>
+    <div class="nudge-actions">${btns}</div>
+  </div>`;
+}
+
+window.dismissNudge = async function(yIdx){
+  await setVal(`nudge-dismissed:${yIdx}`, true);
+  render();
+};
+
+// ── 1-tap quick check-in ───────────────────────────────────────────────────
+async function renderQuickCheckin(start, todayIdx){
+  const colorMap = { physical:'#e5e5e5', mental:'#ef4444', financial:'#3b82f6', spiritual:'#22c55e' };
+  const date = new Date(start.getTime() + todayIdx*DAY_MS);
+  const isRest = dayTypeFor(date) === 0;
+  const stats = await computeAllPillarStats(start, todayIdx);
+
+  let physicalBtn;
+  if(isRest){
+    physicalBtn = `<div class="qc-btn qc-rest">Rest day</div>`;
+  } else {
+    const att = await getVal(`attendance:${todayIdx}`);
+    const done = !!(att && att.went);
+    physicalBtn = `<button class="qc-btn ${done?'done':''}" style="--qc-color:${colorMap.physical};" onclick="quickCheckIn('physical')">${done?'✓ ':''}Physical<span class="qc-streak">🔥 ${stats.physical.streak}</span></button>`;
+  }
+
+  let othersHtml = '';
+  for(const p of ['mental','financial','spiritual']){
+    const ids = PILLARS[p].dailyTasks.map(t=>t.id);
+    const done = await getPillarDayTasks(p, todayIdx);
+    const complete = ids.length > 0 && ids.every(id => done.includes(id));
+    othersHtml += `<button class="qc-btn ${complete?'done':''}" style="--qc-color:${colorMap[p]};" onclick="quickCheckIn('${p}')">${complete?'✓ ':''}${PILLARS[p].label}<span class="qc-streak">🔥 ${stats[p].streak}</span></button>`;
+  }
+  return `<div class="qc-row">${physicalBtn}${othersHtml}</div>`;
+}
+
+window.quickCheckIn = async function(pillar){
+  const start = await getStart();
+  const todayIdx = dayIndexFor(start, new Date());
+
+  if(pillar === 'physical'){
+    const date = new Date(start.getTime() + todayIdx*DAY_MS);
+    if(dayTypeFor(date) === 0){ render(); return; }
+    const att = await getVal(`attendance:${todayIdx}`);
+    const done = !!(att && att.went);
+    await setVal(`attendance:${todayIdx}`, { went: !done, dateISO: new Date().toISOString() });
+    if(!done){
+      const { streak } = await computeStreakStats(start, todayIdx);
+      showToast(`🔥 Physical done! ${streak} day streak.`);
+    }
+  } else {
+    const ids = PILLARS[pillar].dailyTasks.map(t => t.id);
+    const done = await getPillarDayTasks(pillar, todayIdx);
+    const complete = ids.length > 0 && ids.every(id => done.includes(id));
+    if(complete){
+      await setVal(`ptask:${pillar}:${todayIdx}`, []);
+    } else {
+      await setVal(`ptask:${pillar}:${todayIdx}`, ids.slice());
+      const { streak } = await computePillarStats(pillar, todayIdx);
+      showToast(`🔥 ${PILLARS[pillar].label} done! ${streak} day streak.`);
+    }
+  }
+  render();
+};
+
+async function renderAllTodosCombined(){
+  const sources = [
+    { key: 'todos', pillar: 'physical', label: 'Physical', color: 'var(--accent)' },
+    { key: 'todos:mental', pillar: 'mental', label: 'Mental', color: '#ef4444' },
+    { key: 'todos:financial', pillar: 'financial', label: 'Financial', color: '#3b82f6' },
+    { key: 'todos:spiritual', pillar: 'spiritual', label: 'Spiritual', color: '#22c55e' },
+    { key: 'todos:general', pillar: 'general', label: 'General', color: 'var(--purple)' },
+  ];
+  let combined = [];
+  for(const src of sources){
+    const list = (await getVal(src.key)) || [];
+    list.forEach(t => combined.push({ ...t, pillar: src.pillar, originLabel: src.label, originColor: src.color }));
+  }
+  if(!combined.length){
+    return `<div class="todo-empty">Nothing on any of your lists yet. Add a task on any dashboard and it'll show up here.</div>`;
+  }
+  // Timed tasks first (earliest first), then untimed tasks, incomplete before done within each group
+  combined.sort((a,b) => {
+    if(!!a.done !== !!b.done) return a.done ? 1 : -1;
+    if(a.time && b.time) return a.time.localeCompare(b.time);
+    if(a.time && !b.time) return -1;
+    if(!a.time && b.time) return 1;
+    return 0;
+  });
+  return combined.map(t => {
+    const toggleCall = t.pillar==='physical' ? `toggleTodo('${t.id}')` : `togglePillarTodo('${t.pillar}','${t.id}')`;
+    const deleteCall = t.pillar==='physical' ? `deleteTodo('${t.id}')` : `deletePillarTodo('${t.pillar}','${t.id}')`;
+    return `
+    <li class="todo-item ${t.done?'done':''}">
+      <div class="todo-check" onclick="${toggleCall}" style="${t.done?`background:${t.originColor};border-color:${t.originColor};`:`border-color:${t.originColor};`}">${t.done?'✓':''}</div>
+      <div style="flex:1;">
+        <div class="todo-label" onclick="${toggleCall}">${escapeHtml(t.text)}</div>
+        <div class="todo-meta">
+          <span class="todo-origin" style="background:${t.originColor}22;color:${t.originColor};">${t.originLabel}</span>
+          ${t.time ? `<span class="todo-time">⏰ ${formatTimeLabel(t.time)}</span>` : ''}
+          ${t.note ? `<span class="todo-note">${escapeHtml(t.note)}</span>` : ''}
+        </div>
+      </div>
+      <button class="todo-del" onclick="${deleteCall}">✕</button>
+    </li>`;
+  }).join('');
+}
+
+async function renderGeneralDashboard(start, todayIdx, week){
+  const stats = await computeAllPillarStats(start, todayIdx);
+  const { streak: perfectStreak, totalPerfect } = await computePerfectDayStats(start, todayIdx);
+
+  const quickCheckin = await renderQuickCheckin(start, todayIdx);
+  const nudge = await renderYesterdayNudge(start, todayIdx);
+  const barChart = renderGeneralBarChart(stats);
+  const heatmap = await renderGeneralHeatmap(start, todayIdx);
+
+  // Weight (kg) snapshot + mini sparkline, pulled from the Physical pillar's log
+  const bodyweight = await getVal('user:bodyweight');
+  const weightLog = ((await getVal('weightlog')) || []).slice().sort((a,b)=>a.week-b.week);
+  let weightHtml = `<div class="todo-empty">Log your weight on the Physical tab to see it here.</div>`;
+  if(weightLog.length >= 1){
+    const startW = bodyweight || weightLog[0].weight;
+    const latest = weightLog[weightLog.length-1].weight;
+    const diff = roundHalf(latest - startW);
+    let sparkline = '';
+    if(weightLog.length >= 2){
+      const weights = weightLog.map(s=>s.weight);
+      const min = Math.min(...weights), max = Math.max(...weights);
+      const range = (max-min) || 1;
+      const W=280, H=60, PAD=10;
+      const stepX = (W-2*PAD)/(weightLog.length-1);
+      const points = weightLog.map((s,i)=>{
+        const x = PAD + i*stepX;
+        const y = H-PAD - ((s.weight-min)/range)*(H-2*PAD);
+        return [x,y];
+      });
+      const path = points.map((p,i)=>(i===0?'M':'L')+p[0].toFixed(1)+','+p[1].toFixed(1)).join(' ');
+      const dots = points.map(p=>`<circle cx="${p[0].toFixed(1)}" cy="${p[1].toFixed(1)}" r="3" fill="var(--purple-dim)"/>`).join('');
+      sparkline = `<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:60px;overflow:visible;margin-top:8px;">
+        <path d="${path}" fill="none" stroke="var(--purple)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        ${dots}
+      </svg>`;
+    }
+    weightHtml = `
+      <div class="gen-mini-stats">
+        <div class="gen-mini-stat"><div class="num">${startW}</div><div class="lbl">Start kg</div></div>
+        <div class="gen-mini-stat"><div class="num">${latest}</div><div class="lbl">Latest kg</div></div>
+        <div class="gen-mini-stat"><div class="num">${diff<=0?'−':'+'}${Math.abs(diff)}</div><div class="lbl">${diff<=0?'Lost':'Gained'}</div></div>
+      </div>
+      ${sparkline}
+    `;
+  }
+
+  const todosKey = 'todos:general';
+  const todos = (await getVal(todosKey)) || [];
+  const todoHtml = todos.length ? todos.map(t => `
+    <li class="todo-item ${t.done?'done':''}">
+      <div class="todo-check" onclick="togglePillarTodo('general','${t.id}')" style="${t.done?'background:var(--purple);border-color:var(--purple);':'border-color:var(--purple);'}">${t.done?'✓':''}</div>
+      <div style="flex:1;">
+        <div class="todo-label" onclick="togglePillarTodo('general','${t.id}')">${escapeHtml(t.text)}</div>
+        ${todoMetaHtml(t)}
+      </div>
+      <button class="todo-del" onclick="deletePillarTodo('general','${t.id}')">✕</button>
+    </li>`).join('') : `<div class="todo-empty">Nothing on your general list yet.</div>`;
+
+  const allTodosHtml = await renderAllTodosCombined();
+
+  return `
+    <div class="card gen-card qc-card">
+      <div class="section-title" style="color:var(--purple);">Quick Check-in · Today</div>
+      ${quickCheckin}
+    </div>
+    <div class="card gen-card">
+      <div class="section-title" style="color:var(--purple);">📋 All To-Dos · Every Dashboard</div>
+      <div style="font-size:11px;color:var(--ink-dim);margin-bottom:10px;">Everything you've written across Physical, Mental, Financial, Spiritual, and General — tagged by where it came from, with time and explanation if you added one.</div>
+      <ul class="todo-list">${allTodosHtml}</ul>
+    </div>
+    ${nudge}
+    <div class="quote-card" style="border-left:3px solid var(--purple);">
+      <div class="quote-text">${SESSION_QUOTE.text}</div>
+      <div class="quote-author">— ${SESSION_QUOTE.author}</div>
+    </div>
+    <div class="card gen-card">
+      <div class="gen-section">
+        <div class="section-title" style="color:var(--purple);">🔥 Perfect Day Streak</div>
+        <div class="weight-stats">
+          <div class="wstat"><div class="num" style="color:var(--purple);">${perfectStreak}</div><div class="lbl">Day Streak</div></div>
+          <div class="wstat"><div class="num" style="color:var(--purple);">${totalPerfect}</div><div class="lbl">Total Perfect Days</div></div>
+        </div>
+      </div>
+      <div class="gen-section">
+        <div class="section-title" style="color:var(--purple);">Bodyweight</div>
+        ${weightHtml}
+      </div>
+      <div class="gen-section">
+        <div class="section-title" style="color:var(--purple);">Progress · All 4 Pillars</div>
+        ${barChart}
+      </div>
+      <div class="gen-section">
+        <div class="section-title" style="color:var(--purple);">Full Program Heatmap · P · M · F · S</div>
+        ${heatmap}
+      </div>
+      <div class="gen-section">
+        <div class="section-title" style="color:var(--purple);">General To-do</div>
+        <div class="todo-add-extra">
+          <input type="time" id="pillar-todo-time-general">
+          <input type="text" id="pillar-todo-note-general" placeholder="Explanation / why (optional)">
+        </div>
+        <div class="todo-add">
+          <input type="text" id="pillar-todo-input-general" placeholder="Add a task..." onkeydown="if(event.key==='Enter'){addPillarTodo('general');}">
+          <button onclick="addPillarTodo('general')" style="background:var(--purple);">+</button>
+        </div>
+        <ul class="todo-list">${todoHtml}</ul>
+      </div>
+    </div>
+  `;
+}
+
+async function renderPillarDashboard(pillar, start, todayIdx, week){
+  const def = PILLARS[pillar];
+  const { streak, totalDays } = await computePillarStats(pillar, todayIdx);
+  const targetsHtml = def.targets.map(t => `<li>${t}</li>`).join('');
+
+  const todosKey = `todos:${pillar}`;
+  const todos = (await getVal(todosKey)) || [];
+  const todoHtml = todos.length ? todos.map(t => `
+    <li class="todo-item ${t.done?'done':''}">
+      <div class="todo-check" onclick="togglePillarTodo('${pillar}','${t.id}')">${t.done?'✓':''}</div>
+      <div style="flex:1;">
+        <div class="todo-label" onclick="togglePillarTodo('${pillar}','${t.id}')">${escapeHtml(t.text)}</div>
+        ${todoMetaHtml(t)}
+      </div>
+      <button class="todo-del" onclick="deletePillarTodo('${pillar}','${t.id}')">✕</button>
+    </li>`).join('') : `<div class="todo-empty">No tasks added yet.</div>`;
+
+  return `
+    <div class="quote-card">
+      <div class="quote-text">${SESSION_QUOTE.text}</div>
+      <div class="quote-author">— ${SESSION_QUOTE.author}</div>
+    </div>
+    <div class="card">
+      <div class="section-title">${def.label} · Streak</div>
+      <div class="pillar-tagline">${def.tagline}</div>
+      <div class="weight-stats">
+        <div class="wstat"><div class="num">${streak}</div><div class="lbl">Day Streak</div></div>
+        <div class="wstat"><div class="num">${totalDays}</div><div class="lbl">Full Days Logged</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="section-title">Summer Targets</div>
+      <ul class="targets-list">${targetsHtml}</ul>
+    </div>
+    <div class="card">
+      <div class="section-title">${def.label} To-do</div>
+      <div class="todo-add-extra">
+        <input type="time" id="pillar-todo-time-${pillar}">
+        <input type="text" id="pillar-todo-note-${pillar}" placeholder="Explanation / why (optional)">
+      </div>
+      <div class="todo-add">
+        <input type="text" id="pillar-todo-input-${pillar}" placeholder="Add a task..." onkeydown="if(event.key==='Enter'){addPillarTodo('${pillar}');}">
+        <button onclick="addPillarTodo('${pillar}')">+</button>
+      </div>
+      <ul class="todo-list">${todoHtml}</ul>
+    </div>
+  `;
+}
+
+window.addPillarTodo = async function(pillar){
+  const input = document.getElementById(`pillar-todo-input-${pillar}`);
+  if(!input || !input.value.trim()) return;
+  const timeInput = document.getElementById(`pillar-todo-time-${pillar}`);
+  const noteInput = document.getElementById(`pillar-todo-note-${pillar}`);
+  const key = `todos:${pillar}`;
+  const list = (await getVal(key)) || [];
+  list.push({ id:'t_'+Date.now(), text: input.value.trim(), done:false, time: timeInput && timeInput.value ? timeInput.value : '', note: noteInput && noteInput.value.trim() ? noteInput.value.trim() : '' });
+  await setVal(key, list);
+  render();
+};
+window.togglePillarTodo = async function(pillar, id){
+  const key = `todos:${pillar}`;
+  const list = (await getVal(key)) || [];
+  const item = list.find(t=>t.id===id);
+  if(item) item.done = !item.done;
+  await setVal(key, list);
+  render();
+};
+window.deletePillarTodo = async function(pillar, id){
+  const key = `todos:${pillar}`;
+  let list = (await getVal(key)) || [];
+  list = list.filter(t=>t.id!==id);
+  await setVal(key, list);
+  render();
+};
+
+async function renderPillarToday(pillar, start, dayIdx, todayIdx, week){
+  const def = PILLARS[pillar];
+  const date = new Date(start.getTime() + dayIdx*DAY_MS);
+  const isToday = dayIdx === todayIdx;
+  const dayLabel = isToday ? 'Today' : date.toLocaleDateString(undefined,{weekday:'long', month:'short', day:'numeric'});
+  const doneTasks = await getPillarDayTasks(pillar, dayIdx);
+
+  const taskHtml = def.dailyTasks.map(t => `
+    <li class="task-item ${doneTasks.includes(t.id)?'done':''}">
+      <div class="task-check" onclick="togglePillarDayTask('${pillar}',${dayIdx},'${t.id}')">${doneTasks.includes(t.id)?'✓':''}</div>
+      <div class="task-label" onclick="togglePillarDayTask('${pillar}',${dayIdx},'${t.id}')">${t.label}</div>
+    </li>`).join('');
+
+  let weeklyHtml = '';
+  if(def.weeklyTasks.length){
+    const weekDone = await getPillarWeekTasks(pillar, week);
+    weeklyHtml = `
+      <div class="card">
+        <div class="section-title">This Week</div>
+        <ul class="task-list">
+          ${def.weeklyTasks.map(t => `
+            <li class="task-item ${weekDone.includes(t.id)?'done':''}">
+              <div class="task-check" onclick="togglePillarWeekTask('${pillar}',${week},'${t.id}')">${weekDone.includes(t.id)?'✓':''}</div>
+              <div class="task-label" onclick="togglePillarWeekTask('${pillar}',${week},'${t.id}')">${t.label}</div>
+            </li>`).join('')}
+        </ul>
+      </div>`;
+  }
+
+  const nav = `
+    <div class="day-head">
+      <h2>${dayLabel}</h2>
+      <div class="badge">${date.toLocaleDateString(undefined,{month:'short',day:'numeric'})}</div>
+    </div>
+  `;
+
+  return `
+    <div class="card">
+      ${nav}
+      <div class="why">${def.tagline}</div>
+      <ul class="task-list">${taskHtml}</ul>
+    </div>
+    ${weeklyHtml}
+  `;
+}
+
+async function renderPillarCalendar(pillar, start, todayIdx){
+  let html = '';
+  for(let w=0; w<WEEKS; w++){
+    html += `<div class="weeklabel">Week ${w+1}</div><div class="grid">`;
+    for(let d=0; d<7; d++){
+      const idx = w*7+d;
+      const date = new Date(start.getTime() + idx*DAY_MS);
+      const isFuture = idx > todayIdx;
+      const isToday = idx === todayIdx;
+      let mark = '·';
+      if(!isFuture){
+        const complete = await isPillarDayComplete(pillar, idx);
+        if(complete) mark = '✓';
+        else if(isToday) mark = '?';
+        else mark = '✕';
+      }
+      html += `<div class="gcell ${isToday?'today':''}" onclick="openPillarDay('${pillar}',${idx})">
+        <div class="dlabel">${DAY_NAMES[date.getDay()].slice(0,3)}</div>
+        <div class="mark" style="color:${mark==='✓'?'var(--good)':mark==='✕'?'var(--bad)':'var(--ink-dim)'}">${mark}</div>
+      </div>`;
+    }
+    html += `</div>`;
+  }
+  return html;
+}
+
+// ── Shared Claude API helper ──────────────────────────────────────────────
+async function callClaude(system, messages){
+  const response = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      model: "claude-sonnet-4-6",
+      max_tokens: 1000,
+      system: system,
+      messages: messages
+    })
+  });
+  if(!response.ok) throw new Error('API request failed: ' + response.status);
+  const data = await response.json();
+  return (data.content || []).map(b => b.text || '').join('\n').trim();
+}
+
+// ── AI Assistant (Coach) ───────────────────────────────────────────────────
+const COACH_SYSTEM = `You are Dagi's personal assistant across his ENTIRE summer program — all four PMFS pillars: Physical (gym/training), Mental (reading/learning/skills), Financial (content, videos, money discipline), and Spiritual (prayer, church, reflection). Do NOT default to fitness-only advice — pay attention to what he's actually asking about and help with that pillar specifically, whether it's a book he's reading, a video he's editing, a prayer habit, or a workout. Be direct, encouraging, and practical, with concrete actionable advice. Keep replies fairly short (3-8 sentences) unless asked for depth. No fluff, no generic motivational filler — speak like a sharp, honest coach who respects him too much to sugarcoat things.
+
+Reference constitution context if relevant:
+${CONSTITUTION_TEXT}`;
+
+async function renderAssistantChat(){
+  const logEl = document.getElementById('assistant-log');
+  if(!logEl) return;
+  const history = (await getVal('coachHistory')) || [];
+  logEl.innerHTML = history.length ? history.map(m =>
+    `<div class="coach-msg ${m.role}">${escapeHtml(m.content)}</div>`
+  ).join('') : `<div class="coach-empty">Ask about training, reading, content, money, faith — anything.</div>`;
+  logEl.scrollTop = logEl.scrollHeight;
+}
+
+window.toggleAssistantPanel = function(){
+  const p = document.getElementById('assistant-panel');
+  if(p){
+    p.classList.toggle('open');
+    if(p.classList.contains('open')) renderAssistantChat();
+  }
+};
+
+window.sendCoachMessage = async function(){
+  const input = document.getElementById('assistant-input');
+  if(!input || !input.value.trim()) return;
+  const text = input.value.trim();
+  input.value = '';
+  const history = (await getVal('coachHistory')) || [];
+  history.push({ role:'user', content:text });
+  await setVal('coachHistory', history);
+  await renderAssistantChat();
+
+  const logEl = document.getElementById('assistant-log');
+  if(logEl){
+    logEl.innerHTML += `<div class="coach-msg loading" id="coach-loading">Thinking…</div>`;
+    logEl.scrollTop = logEl.scrollHeight;
+  }
+
+  try{
+    const apiMessages = history.map(m => ({ role: m.role, content: m.content }));
+    const reply = await callClaude(COACH_SYSTEM, apiMessages);
+    const h2 = (await getVal('coachHistory')) || [];
+    h2.push({ role:'assistant', content: reply });
+    await setVal('coachHistory', h2);
+  }catch(e){
+    const h2 = (await getVal('coachHistory')) || [];
+    h2.push({ role:'assistant', content: "Couldn't reach the assistant right now. Try again in a moment." });
+    await setVal('coachHistory', h2);
+  }
+  await renderAssistantChat();
+};
+
+window.clearCoachHistory = async function(){
+  if(!confirm('Clear the whole chat history?')) return;
+  await setVal('coachHistory', []);
+  await renderAssistantChat();
+};
+
+function escapeHtml(str){
+  const d = document.createElement('div');
+  d.textContent = str;
+  return d.innerHTML.replace(/\n/g, '<br>');
+}
+
+function formatTimeLabel(t){
+  if(!t) return '';
+  const [h,m] = t.split(':').map(Number);
+  const ampm = h>=12 ? 'PM' : 'AM';
+  const h12 = ((h+11)%12)+1;
+  return `${h12}:${String(m).padStart(2,'0')} ${ampm}`;
+}
+function todoMetaHtml(t){
+  if(!t.time && !t.note) return '';
+  return `<div class="todo-meta">${t.time ? `<span class="todo-time">⏰ ${formatTimeLabel(t.time)}</span>` : ''}${t.note ? `<span class="todo-note">${escapeHtml(t.note)}</span>` : ''}</div>`;
+}
+
+// ── The Court ───────────────────────────────────────────────────────────────
+const COURT_SYSTEM = `You are the presiding judge of Dagi's Summer Constitutional Court. You enforce the Summer Constitution below EXACTLY as written — its articles, the PMFS pillars, and above all the Penal Code & Correction Matrix (violation classes 1-4, their example infractions, and their listed corrective punishments).
+
+Dagi will confess something he did or failed to do. You will:
+1. Identify the specific rule/article broken (quote or closely paraphrase it).
+2. Classify the infraction as Class 1 (Minor), Class 2 (Moderate), Class 3 (Major), or Class 4 (Constitutional) using the definitions and examples in the Penal Code. If the confession doesn't cleanly match a listed example, use your judgment to classify by severity and spirit of the constitution — you are not limited to only the literal example list, the constitution covers self-discipline generally.
+3. Apply the Repeat-Offense Multiplier if the offense history below shows this is a repeat within the 7-day rolling window (1st: base, 2nd: +50% volume/duration, 3rd: double, 4th: automatic Class 4).
+4. Select ONE concrete corrective punishment from (or clearly modeled on) the matrix for that class, scaled by the multiplier, and state it as a specific, executable instruction (with exact numbers — pages, minutes, reps, hours).
+5. If he claims illness, family emergency, or church duty as the reason, and it is credible and not laziness/procrastination (which are explicitly banned as excuses), acknowledge the exemption and waive punishment — but still log the infraction.
+
+Respond ONLY with valid JSON, no markdown fences, no preamble, in exactly this shape:
+{"rule":"short name of the rule/article broken","violationClass":1,"reasoning":"2-3 sentences explaining the ruling, referencing the constitution and any repeat-offense multiplier applied","punishment":"the specific corrective punishment, stated as direct instructions","category":"a short lowercase-with-dashes tag for this type of infraction, e.g. 'missed-gym', 'junk-food', 'skipped-prayer', used to track repeat offenses","exempt":false}
+
+If exempt is true, punishment should say "Waived — logged exemption" and explain why briefly in reasoning.
+
+THE SUMMER CONSTITUTION:
+${CONSTITUTION_TEXT}`;
+
+function within7Days(dateISO){
+  return (Date.now() - new Date(dateISO).getTime()) <= 7*24*60*60*1000;
+}
+
+async function renderCourt(){
+  const log = ((await getVal('courtlog')) || []).slice().sort((a,b)=> new Date(b.dateISO)-new Date(a.dateISO));
+  const pending = await getVal('courtPending');
+
+  let verdictHtml = '';
+  if(pending && pending.verdict){
+    const v = pending.verdict;
+    const classLabel = ['','Minor','Moderate','Major','Constitutional'][v.violationClass] || 'Unclassified';
+    verdictHtml = `
+      <div class="verdict-card">
+        <div class="verdict-class c${v.violationClass||1}">Class ${v.violationClass||'?'} · ${classLabel}${v.exempt ? ' · Exempt' : ''}</div>
+        <div class="verdict-rule">${escapeHtml(v.rule||'Rule')}</div>
+        <div class="verdict-reason">${escapeHtml(v.reasoning||'')}</div>
+        <div class="verdict-punish-label">Sentence</div>
+        <div class="verdict-punish">${escapeHtml(v.punishment||'')}</div>
+        <div class="verdict-actions">
+          <button class="primary" onclick="acceptVerdict()">Accept &amp; Log</button>
+        </div>
+        ${!v.exempt ? `
+        <div class="court-timer-box">
+          <div class="lbl">Punishment Timer</div>
+          <div class="court-timer-display" id="court-timer-display">00:00</div>
+          <div class="court-timer-controls">
+            <button onclick="courtTimerStart()">Start</button>
+            <button class="secondary" onclick="courtTimerPause()">Pause</button>
+            <button class="secondary" onclick="courtTimerReset()">Reset</button>
+          </div>
+        </div>` : ''}
+      </div>
+    `;
+  }
+
+  const docketHtml = log.length ? log.slice(0,15).map(item => {
+    const classLabel = ['','Minor','Moderate','Major','Constitutional'][item.violationClass] || '?';
+    return `
+      <div class="docket-item">
+        <div class="docket-date">${new Date(item.dateISO).toLocaleDateString(undefined,{month:'short',day:'numeric',hour:'2-digit',minute:'2-digit'})} · Class ${item.violationClass} (${classLabel})</div>
+        <div class="docket-confession">"${escapeHtml(item.confession)}"</div>
+        <div class="docket-verdict"><b>${escapeHtml(item.rule)}</b> — ${escapeHtml(item.punishment)}</div>
+      </div>
+    `;
+  }).join('') : `<div class="court-empty">No offenses on record. Keep it that way.</div>`;
+
+  return `
+    <div class="card">
+      <div class="court-seal">
+        <div class="gavel">⚖</div>
+        <h2>The Constitutional Court</h2>
+        <p>Confess what happened. The court will rule on which article was broken and hand down a sentence from the Correction Matrix.</p>
+      </div>
+      <div class="confess-box">
+        <textarea id="confession-input" placeholder="e.g. I skipped the gym today and had two sodas..." ${pending ? 'disabled' : ''}></textarea>
+        <div class="confess-actions">
+          <button onclick="submitToCourt()" ${pending ? 'disabled' : ''} id="submit-court-btn">Submit to Court</button>
+          ${pending ? `<button class="secondary" onclick="dismissVerdict()">Dismiss</button>` : ''}
+        </div>
+      </div>
+      ${verdictHtml}
+    </div>
+    <div class="card docket">
+      <div class="section-title">The Docket (recent offenses)</div>
+      ${docketHtml}
+    </div>
+  `;
+}
+
+async function runCourtQuery(confession){
+  const fullLog = (await getVal('courtlog')) || [];
+  const recent = fullLog.filter(e => within7Days(e.dateISO));
+  const historyNote = recent.length
+    ? `Recent offense history (last 7 days, for repeat-offense multiplier purposes):\n` +
+      recent.map(e => `- ${new Date(e.dateISO).toLocaleDateString()}: category="${e.category}", class ${e.violationClass}, rule "${e.rule}"`).join('\n')
+    : 'No offenses logged in the last 7 days.';
+
+  const userMsg = `Confession: "${confession}"\n\n${historyNote}`;
+  const raw = await callClaude(COURT_SYSTEM, [{ role:'user', content: userMsg }]);
+  const cleaned = raw.replace(/^```json\s*|^```\s*|```$/g, '').trim();
+  let verdict;
+  try{ verdict = JSON.parse(cleaned); }
+  catch(e){ verdict = { rule:'Parsing Error', violationClass:1, reasoning:'The court could not parse a ruling. Try rephrasing your confession.', punishment:'N/A', category:'error', exempt:false }; }
+  return verdict;
+}
+
+window.submitToCourt = async function(){
+  const input = document.getElementById('confession-input');
+  if(!input || !input.value.trim()) return;
+  const confession = input.value.trim();
+  const btn = document.getElementById('submit-court-btn');
+  if(btn){ btn.disabled = true; btn.textContent = 'The court is deliberating…'; }
+
+  try{
+    const verdict = await runCourtQuery(confession);
+    await setVal('courtPending', { confession, verdict });
+    resetCourtTimerState();
+  }catch(e){
+    alert("Couldn't reach the court right now. Try again in a moment.");
+  }
+  render();
+};
+
+window.acceptVerdict = async function(){
+  const pending = await getVal('courtPending');
+  if(!pending) return;
+  const log = (await getVal('courtlog')) || [];
+  log.push({
+    id: 'c_' + Date.now(),
+    dateISO: new Date().toISOString(),
+    confession: pending.confession,
+    rule: pending.verdict.rule,
+    violationClass: pending.verdict.violationClass,
+    reasoning: pending.verdict.reasoning,
+    punishment: pending.verdict.punishment,
+    category: pending.verdict.category,
+    exempt: !!pending.verdict.exempt
+  });
+  await setVal('courtlog', log);
+  await deleteVal('courtPending');
+  render();
+};
+
+window.dismissVerdict = async function(){
+  if(!confirm('Dismiss this ruling without logging it?')) return;
+  await deleteVal('courtPending');
+  render();
+};
+
+// Court punishment timer — counts up from zero, start/pause/reset.
+let courtSwElapsedMs = 0;
+let courtSwStartTs = null;
+let courtSwInterval = null;
+function getCourtSwMs(){ return courtSwElapsedMs + (courtSwStartTs ? (Date.now()-courtSwStartTs) : 0); }
+function updateCourtTimerDisplay(){
+  const el = document.getElementById('court-timer-display');
+  if(!el) return;
+  const totalSec = Math.floor(getCourtSwMs()/1000);
+  const h = Math.floor(totalSec/3600), m = Math.floor((totalSec%3600)/60), s = totalSec%60;
+  el.textContent = h > 0 ? `${padTime(h)}:${padTime(m)}:${padTime(s)}` : `${padTime(m)}:${padTime(s)}`;
+}
+function resetCourtTimerState(){
+  if(courtSwInterval){ clearInterval(courtSwInterval); courtSwInterval=null; }
+  courtSwElapsedMs = 0; courtSwStartTs = null;
+}
+window.courtTimerStart = function(){
+  if(courtSwInterval) return;
+  courtSwStartTs = Date.now();
+  courtSwInterval = setInterval(updateCourtTimerDisplay, 250);
+};
+window.courtTimerPause = function(){
+  if(courtSwInterval){ courtSwElapsedMs = getCourtSwMs(); clearInterval(courtSwInterval); courtSwInterval=null; courtSwStartTs=null; }
+};
+window.courtTimerReset = function(){
+  window.courtTimerPause();
+  courtSwElapsedMs = 0; courtSwStartTs = null;
+  updateCourtTimerDisplay();
+};
+
+window.startProgram = async function(){
+  const bwField = document.getElementById('bw-field');
+  if(bwField && bwField.value){
+    await setVal('user:bodyweight', parseFloat(bwField.value));
+  }
+  const todayStart = new Date();
+  todayStart.setHours(0,0,0,0);
+  await setVal('program:start', todayStart.toISOString());
+  activeDayIndex = 0;
+  render();
+};
+
+window.resetProgram = async function(){
+  if(!confirm('This clears all logged weights and attendance. Continue?')) return;
+  const keys = await listPrefix('');
+  for(const k of keys){ await deleteVal(k); }
+  activeDayIndex = null;
+  render();
+};
+
+window.setPillar = function(p){ activePillar = p; activeSubTab = 'dashboard'; render(); };
+window.setSubTab = function(s){ activeSubTab = s; render(); };
+window.openDay = function(idx){ activeDayIndex = idx; activePillar = 'physical'; activeSubTab = 'today'; render(); };
+window.openPillarDay = function(pillar, idx){ activeDayIndex = idx; activePillar = pillar; activeSubTab = 'today'; render(); };
+
+window.selectFeel = function(exId, feel){
+  document.querySelectorAll(`.feel[data-ex="${exId}"]`).forEach(el=>el.classList.remove('on'));
+  const el = document.querySelector(`.feel[data-ex="${exId}"][data-feel="${feel}"]`);
+  if(el) el.classList.add('on');
+  el.dataset.selected = 'true';
+};
+
+window.logExercise = async function(exId, dayIdx){
+  const input = document.getElementById(`val-${exId}`);
+  const repsInput = document.getElementById(`reps-${exId}`);
+  const selected = document.querySelector(`.feel[data-ex="${exId}"].on`);
+  if(!input.value){ alert('Enter a value first'); return; }
+  if(!selected){ alert('Pick how it felt: easy, just right, or hard'); return; }
+  const entry = { value: parseFloat(input.value), feel: selected.dataset.feel, loggedAt: new Date().toISOString() };
+  if(repsInput && repsInput.value) entry.reps = parseInt(repsInput.value, 10);
+  await setVal(`exlog:${exId}:${dayIdx}`, entry);
+  render();
+};
+
+window.toggleFavorite = async function(exId){
+  let favs = (await getVal('favorites')) || [];
+  if(favs.includes(exId)) favs = favs.filter(f => f !== exId);
+  else favs.push(exId);
+  await setVal('favorites', favs);
+  render();
+};
+
+function showToast(message){
+  const div = document.createElement('div');
+  div.className = 'toast-overlay';
+  div.innerHTML = `<div class="toast-box"><div class="big">${message}</div><button onclick="this.closest('.toast-overlay').remove()">Nice</button></div>`;
+  document.body.appendChild(div);
+}
+
+window.markAttendance = async function(dayIdx, went){
+  await setVal(`attendance:${dayIdx}`, { went, dateISO: new Date().toISOString() });
+  if(went) showToast(pick(DONE_MESSAGES));
+  render();
+};
+
+window.logWeeklyWeight = async function(week){
+  const input = document.getElementById('weekweight');
+  if(!input || !input.value){ alert('Enter a weight first'); return; }
+  const w = parseFloat(input.value);
+  let log = (await getVal('weightlog')) || [];
+  const idx = log.findIndex(e=>e.week===week);
+  if(idx>=0) log[idx] = { week, weight:w, dateISO:new Date().toISOString() };
+  else log.push({ week, weight:w, dateISO:new Date().toISOString() });
+  await setVal('weightlog', log);
+  render();
+};
+
+window.addTodo = async function(){
+  const input = document.getElementById('todo-input');
+  if(!input || !input.value.trim()) return;
+  const timeInput = document.getElementById('todo-time');
+  const noteInput = document.getElementById('todo-note');
+  const list = (await getVal('todos')) || [];
+  list.push({ id:'t_'+Date.now(), text: input.value.trim(), done:false, time: timeInput && timeInput.value ? timeInput.value : '', note: noteInput && noteInput.value.trim() ? noteInput.value.trim() : '' });
+  await setVal('todos', list);
+  render();
+};
+
+window.toggleTodo = async function(id){
+  const list = (await getVal('todos')) || [];
+  const item = list.find(t=>t.id===id);
+  if(item) item.done = !item.done;
+  await setVal('todos', list);
+  render();
+};
+
+window.deleteTodo = async function(id){
+  let list = (await getVal('todos')) || [];
+  list = list.filter(t=>t.id!==id);
+  await setVal('todos', list);
+  render();
+};
+
+window.saveVideo = async function(exId){
+  const input = document.getElementById(`vurl-${exId}`);
+  if(!input || !input.value.trim()){ alert('Paste a video link first'); return; }
+  await setVal(`video:${exId}`, input.value.trim());
+  render();
+};
+
+window.saveVideoFile = async function(exId, inputEl){
+  const file = inputEl.files && inputEl.files[0];
+  if(!file) return;
+  if(!file.type.startsWith('video/')){
+    alert('That doesn\'t look like a video file — please choose a video.');
+    inputEl.value = '';
+    return;
+  }
+  // Uploaded videos are stored as base64 text, which inflates size ~33% — keep comfortably under the storage limit.
+  const MAX_BYTES = 4 * 1024 * 1024;
+  if(file.size > MAX_BYTES){
+    alert(`That video is ${(file.size/1024/1024).toFixed(1)}MB. Uploaded videos need to stay under 4MB — try a shorter clip, compress it, or paste a YouTube/TikTok link instead.`);
+    inputEl.value = '';
+    return;
+  }
+  try{
+    const dataUrl = await new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => reject(reader.error || new Error('read failed'));
+      reader.readAsDataURL(file);
+    });
+    await setVal(`video:${exId}`, dataUrl);
+    render();
+  }catch(e){
+    alert('Could not upload that video. Try a smaller file, or paste a link instead.');
+  }
+  inputEl.value = '';
+};
+
+window.removeVideo = async function(exId){
+  await deleteVal(`video:${exId}`);
+  render();
+};
+
+window.toggleAddForm = function(dayKey){
+  const el = document.getElementById(`addform-${dayKey}`);
+  if(el) el.classList.toggle('open');
+};
+
+window.addExercise = async function(dayKey){
+  const name = document.getElementById(`newex-name-${dayKey}`).value.trim();
+  const sets = parseInt(document.getElementById(`newex-sets-${dayKey}`).value, 10) || 3;
+  const reps = document.getElementById(`newex-reps-${dayKey}`).value.trim() || '8-12';
+  const track = document.getElementById(`newex-track-${dayKey}`).value;
+  const cue = document.getElementById(`newex-cue-${dayKey}`).value.trim();
+  if(!name){ alert('Give the exercise a name'); return; }
+  const list = (await getVal(`customex:${dayKey}`)) || [];
+  list.push({ id: `custom_${Date.now()}`, name, sets, reps, track, cat:'custom', cue, custom:true });
+  await setVal(`customex:${dayKey}`, list);
+  render();
+};
+
+window.removeExercise = async function(dayKey, exId, isCustom){
+  if(!confirm(`Remove "${exId}" from this day?`)) return;
+  if(isCustom){
+    const list = (await getVal(`customex:${dayKey}`)) || [];
+    await setVal(`customex:${dayKey}`, list.filter(e => e.id !== exId));
+  } else {
+    const removed = (await getVal(`removedex:${dayKey}`)) || [];
+    if(!removed.includes(exId)) removed.push(exId);
+    await setVal(`removedex:${dayKey}`, removed);
+  }
+  render();
+};
+
+let currentTimerMode = 'rest';
+
+// Rest countdown — timestamp-based so it can't drift, even if the tab is backgrounded.
+let restTotalSeconds = 90;
+let restTargetEnd = null;
+let restRemainingWhenPaused = restTotalSeconds*1000;
+let restInterval = null;
+
+function padTime(n){ return String(n).padStart(2,'0'); }
+
+function getRestRemainingMs(){
+  if(restTargetEnd) return Math.max(0, restTargetEnd - Date.now());
+  return restRemainingWhenPaused;
+}
+function updateTimerDisplay(){
+  if(currentTimerMode !== 'rest') return;
+  const el = document.getElementById('timer-display');
+  if(!el) return;
+  const totalSec = Math.ceil(getRestRemainingMs()/1000);
+  el.textContent = `${padTime(Math.floor(totalSec/60))}:${padTime(totalSec%60)}`;
+}
+function beepAlert(){
+  try{
+    const ctx = new (window.AudioContext||window.webkitAudioContext)();
+    const o = ctx.createOscillator(); const g = ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.frequency.value = 880; g.gain.value = 0.2;
+    o.start(); setTimeout(()=>{ o.stop(); ctx.close(); }, 500);
+  }catch(e){}
+  if(navigator.vibrate) navigator.vibrate([200,100,200]);
+}
+window.setRestTimer = function(sec){
+  if(restInterval){ clearInterval(restInterval); restInterval=null; }
+  restTotalSeconds = sec; restTargetEnd = null; restRemainingWhenPaused = sec*1000;
+  updateTimerDisplay();
+};
+window.startTimer = function(){
+  if(restInterval) return;
+  restTargetEnd = Date.now() + getRestRemainingMs();
+  restRemainingWhenPaused = null;
+  restInterval = setInterval(()=>{
+    const ms = getRestRemainingMs();
+    if(ms <= 0){
+      clearInterval(restInterval); restInterval = null; restTargetEnd = null; restRemainingWhenPaused = 0;
+      updateTimerDisplay(); beepAlert();
+      return;
+    }
+    updateTimerDisplay();
+  }, 250);
+};
+window.pauseTimer = function(){
+  if(restInterval){ restRemainingWhenPaused = getRestRemainingMs(); clearInterval(restInterval); restInterval=null; restTargetEnd=null; }
+};
+window.resetTimerDisplay = function(){
+  window.pauseTimer();
+  restRemainingWhenPaused = restTotalSeconds*1000; restTargetEnd = null;
+  updateTimerDisplay();
+};
+window.quickRest = function(sec){
+  window.setTimerMode('rest');
+  window.setRestTimer(sec);
+  window.startTimer();
+  const p = document.getElementById('timer-panel');
+  if(p) p.classList.add('open');
+};
+
+// Stopwatch — also timestamp-based, counts up from zero.
+let swElapsedMs = 0;
+let swStartTs = null;
+let swInterval = null;
+function getStopwatchMs(){ return swElapsedMs + (swStartTs ? (Date.now()-swStartTs) : 0); }
+function updateStopwatchDisplay(){
+  if(currentTimerMode !== 'stopwatch') return;
+  const el = document.getElementById('timer-display');
+  if(!el) return;
+  const totalSec = Math.floor(getStopwatchMs()/1000);
+  el.textContent = `${padTime(Math.floor(totalSec/60))}:${padTime(totalSec%60)}`;
+}
+window.stopwatchStart = function(){
+  if(swInterval) return;
+  swStartTs = Date.now();
+  swInterval = setInterval(updateStopwatchDisplay, 250);
+};
+window.stopwatchPause = function(){
+  if(swInterval){ swElapsedMs = getStopwatchMs(); clearInterval(swInterval); swInterval=null; swStartTs=null; }
+};
+window.stopwatchReset = function(){
+  window.stopwatchPause();
+  swElapsedMs = 0; swStartTs = null;
+  updateStopwatchDisplay();
+};
+
+window.setTimerMode = function(mode){
+  currentTimerMode = mode;
+  const rTab = document.getElementById('tmode-rest'), sTab = document.getElementById('tmode-stopwatch');
+  const rCtrl = document.getElementById('rest-controls'), sCtrl = document.getElementById('stopwatch-controls');
+  if(rTab) rTab.classList.toggle('active', mode==='rest');
+  if(sTab) sTab.classList.toggle('active', mode==='stopwatch');
+  if(rCtrl) rCtrl.style.display = mode==='rest' ? 'block' : 'none';
+  if(sCtrl) sCtrl.style.display = mode==='stopwatch' ? 'block' : 'none';
+  if(mode==='rest') updateTimerDisplay(); else updateStopwatchDisplay();
+};
+window.toggleTimerPanel = function(){ const p = document.getElementById('timer-panel'); if(p) p.classList.toggle('open'); };
+updateTimerDisplay();
+
+// ── Fresh-start migration ───────────────────────────────────────────────
+// Bumping DATA_VERSION wipes any previously logged data on next load so
+// the app always boots clean after a content/structure update.
+const DATA_VERSION = 'v2-2026-07-08';
+async function bootstrap(){
+  const seenVersion = await getVal('app:dataVersion');
+  if(seenVersion !== DATA_VERSION){
+    const keys = await listPrefix('');
+    for(const k of keys){ await deleteVal(k); }
+    await setVal('app:dataVersion', DATA_VERSION);
+  }
+  render();
+}
+bootstrap();
+
+</script>
+</body>
+</html>
