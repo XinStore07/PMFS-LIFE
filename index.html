@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -486,6 +485,87 @@
   .assistant-widget{position:fixed;right:18px;bottom:86px;z-index:52;}
   .assistant-panel{width:270px;max-width:calc(100vw - 36px);}
   .assistant-panel .coach-log{max-height:280px;}
+
+  /* ── Live user counter (header) ─────────────────────────────────────── */
+  .brand{flex-wrap:wrap;row-gap:8px;}
+  .user-counter{
+    display:flex;align-items:center;gap:6px;background:var(--surface);
+    border:1px solid var(--border);border-radius:999px;padding:6px 12px 6px 10px;
+    font-family:var(--mono);font-size:11px;color:var(--ink-dim);white-space:nowrap;
+  }
+  .uc-dot{width:7px;height:7px;border-radius:50%;background:#4ade80;box-shadow:0 0 6px 1px rgba(74,222,128,0.8);
+    animation:ucPulse 1.8s ease-in-out infinite;}
+  @keyframes ucPulse{0%,100%{opacity:1;}50%{opacity:.4;}}
+  .user-counter b{color:var(--ink);}
+
+  /* ── Onboarding modal ───────────────────────────────────────────────── */
+  .onboarding-overlay{
+    position:fixed;inset:0;z-index:200;background:rgba(0,0,0,0.72);
+    display:flex;align-items:center;justify-content:center;padding:16px;
+    backdrop-filter:blur(2px);
+  }
+  .onboarding-card{
+    background:var(--surface);border:1px solid var(--border);border-radius:12px;
+    padding:22px;max-width:380px;width:100%;max-height:90vh;overflow-y:auto;
+  }
+  .onboarding-card h2{margin:0 0 6px;font-size:20px;text-transform:uppercase;letter-spacing:-0.3px;}
+  .onboarding-card > p{color:var(--ink-dim);font-size:13px;margin:0 0 16px;line-height:1.5;}
+  .ob-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .ob-field{margin-bottom:12px;}
+  .ob-field label{display:block;font-size:11px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.03em;margin-bottom:5px;}
+  .ob-field input, .ob-field select{
+    width:100%;background:var(--surface-2);border:1px solid var(--border);color:var(--ink);
+    padding:9px 10px;border-radius:7px;font-size:14px;font-family:inherit;
+  }
+  .ob-submit{
+    width:100%;background:var(--accent);color:#1c1b1a;border:none;padding:12px;border-radius:8px;
+    font-weight:800;font-size:13px;cursor:pointer;text-transform:uppercase;letter-spacing:.04em;margin-top:4px;
+  }
+  .ob-note{color:var(--ink-dim);font-size:11px;text-align:center;margin-top:10px;line-height:1.4;}
+  .ob-checks{display:flex;flex-direction:column;gap:7px;background:var(--surface-2);border:1px solid var(--border);border-radius:7px;padding:9px 10px;}
+  .ob-check{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink);cursor:pointer;}
+  .ob-check input{width:auto;accent-color:var(--accent);cursor:pointer;}
+
+  /* ── Profile card (bottom) ──────────────────────────────────────────── */
+  .profile-card .day-head{margin-bottom:10px;}
+  .profile-welcome{
+    background:var(--purple-soft);border:1px solid rgba(139,92,246,0.3);color:var(--purple-dim);
+    padding:9px 12px;border-radius:7px;font-size:12.5px;margin-bottom:12px;line-height:1.5;
+  }
+  .profile-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px;}
+  .profile-item{background:var(--surface-2);border-radius:7px;padding:8px 10px;}
+  .profile-item .lbl{font-size:10px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.04em;}
+  .profile-item .val{font-size:14px;font-weight:700;margin-top:2px;}
+  .edit-profile-btn{
+    width:100%;background:var(--surface-2);border:1px solid var(--border);color:var(--ink);
+    padding:9px;border-radius:7px;font-size:12px;font-weight:700;cursor:pointer;text-transform:uppercase;letter-spacing:.03em;
+  }
+
+  /* ── Baseline-vs-now comparison + weekly progress ─────────────────────── */
+  .progress-compare{
+    display:flex;align-items:center;justify-content:center;gap:12px;
+    background:var(--surface-2);border-radius:8px;padding:12px 10px;margin-bottom:14px;flex-wrap:wrap;
+  }
+  .pc-item{text-align:center;}
+  .pc-lbl{font-size:10px;color:var(--ink-dim);text-transform:uppercase;letter-spacing:.04em;}
+  .pc-val{font-family:var(--mono);font-size:18px;font-weight:700;margin-top:2px;}
+  .pc-arrow{color:var(--ink-dim);font-size:16px;}
+  .pc-delta{font-family:var(--mono);font-size:13px;font-weight:700;padding:4px 9px;border-radius:6px;}
+  .pc-delta.down{background:rgba(74,222,128,0.16);color:#4ade80;}
+  .pc-delta.up{background:rgba(248,113,113,0.16);color:#f87171;}
+  .wk-list{display:flex;flex-direction:column;gap:6px;}
+  .wk-row{
+    display:flex;align-items:center;justify-content:space-between;gap:8px;
+    background:var(--surface-2);border-radius:7px;padding:9px 12px;font-size:12.5px;flex-wrap:wrap;
+  }
+  .wk-row.wk-current{border:1px solid var(--purple);}
+  .wk-num{font-weight:700;min-width:80px;}
+  .wk-weight{font-family:var(--mono);color:var(--ink-dim);}
+  .wk-empty{color:var(--ink-dim);font-style:italic;}
+  .wk-delta{font-family:var(--mono);font-weight:700;}
+  .wk-delta.down{color:#4ade80;}
+  .wk-delta.up{color:#f87171;}
+  .wk-sessions{font-family:var(--mono);font-size:11px;color:var(--ink-dim);}
 </style>
 </head>
 <body>
@@ -832,6 +912,141 @@ async function deleteVal(key){
   delete memStore[key];
 }
 
+// ── Shared storage (visible across every visitor, every device) ─────────
+// Same shape as getVal/setVal/listPrefix but passes shared=true so the
+// data is pooled globally instead of being scoped to one browser.
+async function getShared(key){
+  if(hasRealStorage() && !useMemory){
+    try{
+      const r = await window.storage.get(key, true);
+      return r ? JSON.parse(r.value) : null;
+    }catch(e){ /* fall through */ }
+  }
+  if(hasLocalStorage()){
+    const v = localStorage.getItem('logbook:shared:'+key);
+    return v ? JSON.parse(v) : null;
+  }
+  const k = 'shared:'+key;
+  return Object.prototype.hasOwnProperty.call(memStore,k) ? memStore[k] : null;
+}
+async function setShared(key, val){
+  if(hasRealStorage() && !useMemory){
+    try{ await window.storage.set(key, JSON.stringify(val), true); return; }
+    catch(e){ /* fall through */ }
+  }
+  if(hasLocalStorage()){
+    localStorage.setItem('logbook:shared:'+key, JSON.stringify(val));
+    return;
+  }
+  memStore['shared:'+key] = val;
+}
+async function listShared(prefix){
+  if(hasRealStorage() && !useMemory){
+    try{
+      const r = await window.storage.list(prefix, true);
+      if(r) return r.keys;
+    }catch(e){ /* fall through */ }
+  }
+  if(hasLocalStorage()){
+    const out = [];
+    for(let i=0;i<localStorage.length;i++){
+      const k = localStorage.key(i);
+      if(k && k.startsWith('logbook:shared:'+prefix)) out.push(k.slice('logbook:shared:'.length));
+    }
+    return out;
+  }
+  return Object.keys(memStore).filter(k=>k.startsWith('shared:'+prefix)).map(k=>k.slice('shared:'.length));
+}
+async function deleteShared(key){
+  if(hasRealStorage() && !useMemory){
+    try{ await window.storage.delete(key, true); return; }catch(e){ /* fall through */ }
+  }
+  if(hasLocalStorage()){ localStorage.removeItem('logbook:shared:'+key); return; }
+  delete memStore['shared:'+key];
+}
+
+// ── Who's using it right now (live, cross-device counter) ───────────────
+const PRESENCE_TTL_MS = 45000;   // a visitor counts as "online" if seen in the last 45s
+const HEARTBEAT_MS = 20000;      // how often this tab re-announces itself
+let myUserId = null;
+let welcomeBackInfo = null;      // computed once per load, shown in the profile card
+
+function genUserId(){ return 'u_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2,8); }
+
+async function ensureUserId(){
+  if(myUserId) return myUserId;
+  let id = await getVal('user:id');
+  if(!id){ id = genUserId(); await setVal('user:id', id); }
+  myUserId = id;
+  return id;
+}
+async function getMyProfile(){ return await getVal('profile:me'); }
+
+async function sendHeartbeat(){
+  try{
+    const id = await ensureUserId();
+    await setShared('presence:'+id, Date.now());
+  }catch(e){ /* best effort */ }
+}
+
+async function computeUserCounts(){
+  const [memberKeys, presenceKeys] = await Promise.all([listShared('member:'), listShared('presence:')]);
+  const total = memberKeys.length;
+  const now = Date.now();
+  const checks = presenceKeys.slice(0, 60).map(async k => {
+    const ts = await getShared(k);
+    return (typeof ts === 'number' && now - ts < PRESENCE_TTL_MS) ? 1 : 0;
+  });
+  const results = await Promise.all(checks);
+  const active = Math.max(1, results.reduce((a,b)=>a+b,0)); // you're always at least 1
+  return { total: Math.max(total,1), active };
+}
+
+async function refreshUserCounter(){
+  const el = document.getElementById('user-counter');
+  if(!el) return;
+  try{
+    const { total, active } = await computeUserCounts();
+    el.innerHTML = `<span class="uc-dot"></span><b>${active}</b> online now · <b>${total}</b> member${total===1?'':'s'} total`;
+  }catch(e){ /* silent — non-critical UI */ }
+}
+
+let counterIntervalStarted = false;
+function startLiveCounter(){
+  refreshUserCounter();
+  sendHeartbeat();
+  if(counterIntervalStarted) return;
+  counterIntervalStarted = true;
+  setInterval(sendHeartbeat, HEARTBEAT_MS);
+  setInterval(refreshUserCounter, 8000);
+  window.addEventListener('beforeunload', () => {
+    if(myUserId) deleteShared('presence:'+myUserId);
+  });
+}
+
+// ── "Since you were last here" — diffs the profile/stats against the
+// snapshot saved on the previous visit, then updates that snapshot.
+async function prepareWelcomeBack(profile){
+  const prevSnap = await getVal('profile:snapshot');
+  let streak = 0, totalSessions = 0;
+  const start = await getStart();
+  if(start){
+    const todayIdx = dayIndexFor(start, new Date());
+    ({ streak, totalSessions } = await computeStreakStats(start, todayIdx));
+  }
+  const nowSnap = { weight: profile.weight ?? null, totalSessions, streak, lastSeen: Date.now() };
+  let info = null;
+  if(prevSnap){
+    const daysSince = Math.max(0, Math.round((nowSnap.lastSeen - (prevSnap.lastSeen||nowSnap.lastSeen)) / 86400000));
+    const weightDelta = (typeof nowSnap.weight === 'number' && typeof prevSnap.weight === 'number')
+      ? Math.round((nowSnap.weight - prevSnap.weight) * 10) / 10 : null;
+    const sessionsDelta = totalSessions - (prevSnap.totalSessions || 0);
+    info = { daysSince, weightDelta, sessionsDelta, streak };
+  }
+  await setVal('profile:snapshot', nowSnap);
+  return info;
+}
+
 function dateOnly(d){ return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
 function isoDay(d){ return dateOnly(d).toISOString().slice(0,10); }
 
@@ -1018,6 +1233,7 @@ async function render(){
       <h1>PMFS <span>Log</span></h1>
       <div class="meta">WEEK ${week} / ${WEEKS}<br>${pillarLabels[activePillar]}</div>
     </div>
+    <div class="user-counter" id="user-counter"><span class="uc-dot"></span>…</div>
   `;
 
   if(activePillar === 'physical'){
@@ -1067,9 +1283,142 @@ async function render(){
     }
   }
 
+  html += await renderProfileCard();
+  html += await renderWeeklyProgressCard(start, todayIdx);
   html += `<div class="footer-actions"><button class="reset" onclick="resetProgram()">Reset program</button></div>`;
   app.innerHTML = html;
   app.className = `wrap theme-${activePillar}`;
+  startLiveCounter();
+}
+
+const GOAL_LABELS = {
+  strength:'Build strength', fatloss:'Lose fat', general:'General fitness',
+  mental:'Mental health', financial:'Financial discipline', spiritual:'Spiritual growth'
+};
+function goalDisplay(goal){
+  const list = Array.isArray(goal) ? goal : (goal ? [goal] : []);
+  if(list.length === 0) return '—';
+  return list.map(k => GOAL_LABELS[k] || k).join(', ');
+}
+
+async function renderProfileCard(){
+  const profile = await getMyProfile();
+  if(!profile) return '';
+  const joinedStr = profile.joinedAt
+    ? new Date(profile.joinedAt).toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'})
+    : '—';
+
+  let deltaHtml = '';
+  if(welcomeBackInfo){
+    const w = welcomeBackInfo;
+    const parts = [];
+    parts.push(w.daysSince === 0
+      ? "welcome back — you were already here earlier today"
+      : `welcome back — it's been ${w.daysSince} day${w.daysSince===1?'':'s'} since your last visit`);
+    if(typeof w.weightDelta === 'number' && w.weightDelta !== 0){
+      parts.push(`weight ${w.weightDelta>0?'+':''}${w.weightDelta} kg`);
+    }
+    if(w.sessionsDelta) parts.push(`+${w.sessionsDelta} session${w.sessionsDelta===1?'':'s'} logged`);
+    if(w.streak) parts.push(`🔥 ${w.streak} day streak`);
+    deltaHtml = `<div class="profile-welcome">${escapeHtml(parts.join(' · '))}</div>`;
+  }
+
+  return `
+    <div class="card profile-card">
+      <div class="day-head"><h2>Your Profile</h2><span class="badge">Member since ${joinedStr}</span></div>
+      ${deltaHtml}
+      <div class="profile-grid">
+        <div class="profile-item"><div class="lbl">Name</div><div class="val">${escapeHtml(profile.name||'—')}</div></div>
+        ${profile.age ? `<div class="profile-item"><div class="lbl">Age</div><div class="val">${profile.age}</div></div>` : ''}
+        ${profile.height ? `<div class="profile-item"><div class="lbl">Height</div><div class="val">${profile.height} cm</div></div>` : ''}
+        ${profile.weight ? `<div class="profile-item"><div class="lbl">Weight</div><div class="val">${profile.weight} kg</div></div>` : ''}
+        <div class="profile-item"><div class="lbl">Goal</div><div class="val">${escapeHtml(goalDisplay(profile.goal))}</div></div>
+        <div class="profile-item"><div class="lbl">Level</div><div class="val">${escapeHtml(profile.level||'—')}</div></div>
+      </div>
+      <button class="edit-profile-btn" onclick="editProfile()">Edit profile</button>
+    </div>
+  `;
+}
+
+function dateForIdx(start, idx){
+  return new Date(dateOnly(start).getTime() + idx*DAY_MS);
+}
+
+async function computeWeekSessions(start, weekNum, todayIdx){
+  const weekStartIdx = (weekNum-1)*7;
+  let completed = 0, possible = 0;
+  for(let i=0;i<7;i++){
+    const dIdx = weekStartIdx+i;
+    if(dIdx > todayIdx) break; // don't count days that haven't happened yet
+    const date = dateForIdx(start, dIdx);
+    if(dayTypeFor(date) === 0) continue; // Sunday is the scheduled rest day
+    possible++;
+    const att = await getVal(`attendance:${dIdx}`);
+    if(att && att.went) completed++;
+  }
+  return { completed, possible };
+}
+
+async function renderWeeklyProgressCard(start, todayIdx){
+  const profile = await getMyProfile();
+  if(!profile) return '';
+
+  const weightLog = ((await getVal('weightlog')) || []).slice().sort((a,b)=>a.week-b.week);
+  const baseline = profile.weight;                                  // what they filled in when they joined
+  const latestEntry = weightLog[weightLog.length-1];
+  const currentWeight = latestEntry ? latestEntry.weight : baseline; // most recent weekly weigh-in
+
+  let compareHtml = '';
+  if(typeof baseline === 'number' && typeof currentWeight === 'number' && weightLog.length > 0){
+    const delta = Math.round((currentWeight - baseline)*10)/10;
+    compareHtml = `
+      <div class="progress-compare">
+        <div class="pc-item"><div class="pc-lbl">You signed up at</div><div class="pc-val">${baseline} kg</div></div>
+        <div class="pc-arrow">→</div>
+        <div class="pc-item"><div class="pc-lbl">Now</div><div class="pc-val">${currentWeight} kg</div></div>
+        <div class="pc-delta ${delta<=0?'down':'up'}">${delta>0?'+':''}${delta} kg</div>
+      </div>`;
+  } else if(typeof baseline === 'number'){
+    compareHtml = `<p class="why">You signed up at <b>${baseline} kg</b>. Log a weekly weigh-in below to start comparing.</p>`;
+  }
+
+  if(!start){
+    return `
+      <div class="card progress-card">
+        <div class="day-head"><h2>Weekly Progress</h2></div>
+        ${compareHtml}
+        <p class="why">Start the program to begin tracking weekly progress.</p>
+      </div>`;
+  }
+
+  const currentWeekNum = Math.min(Math.floor(todayIdx/7)+1, WEEKS);
+  let rowsHtml = '';
+  let prevWeight = null;
+  for(let w=1; w<=currentWeekNum; w++){
+    const entry = weightLog.find(e=>e.week===w);
+    const { completed, possible } = await computeWeekSessions(start, w, todayIdx);
+    const weightHtml = entry ? `${entry.weight} kg` : '<span class="wk-empty">not logged</span>';
+    let deltaHtml = '';
+    if(entry && prevWeight !== null){
+      const d = Math.round((entry.weight - prevWeight)*10)/10;
+      if(d !== 0) deltaHtml = ` <span class="wk-delta ${d<=0?'down':'up'}">${d>0?'+':''}${d}</span>`;
+    }
+    if(entry) prevWeight = entry.weight;
+    const isCurrent = w === currentWeekNum;
+    rowsHtml += `
+      <div class="wk-row ${isCurrent?'wk-current':''}">
+        <div class="wk-num">Week ${w}${isCurrent?' · now':''}</div>
+        <div class="wk-weight">${weightHtml}${deltaHtml}</div>
+        <div class="wk-sessions">${completed}/${possible} sessions</div>
+      </div>`;
+  }
+
+  return `
+    <div class="card progress-card">
+      <div class="day-head"><h2>Weekly Progress</h2><span class="badge">Week ${currentWeekNum} / ${WEEKS}</span></div>
+      ${compareHtml}
+      <div class="wk-list">${rowsHtml}</div>
+    </div>`;
 }
 
 function dayTypeFor(date){ return date.getDay(); }
@@ -2536,6 +2885,90 @@ window.setTimerMode = function(mode){
 window.toggleTimerPanel = function(){ const p = document.getElementById('timer-panel'); if(p) p.classList.toggle('open'); };
 updateTimerDisplay();
 
+// ── Onboarding — ask about the person before they enter, create a profile ─
+function showOnboardingModal(existing){
+  const p = existing || {};
+  const existingGoals = Array.isArray(p.goal) ? p.goal : (p.goal ? [p.goal] : []);
+  const overlay = document.createElement('div');
+  overlay.id = 'onboarding-overlay';
+  overlay.className = 'onboarding-overlay';
+  overlay.innerHTML = `
+    <div class="onboarding-card">
+      <h2>${existing ? 'Edit Profile' : 'Welcome 👋'}</h2>
+      <p>${existing ? 'Update your details below.' : "Quick intro before you start — this creates your profile at the bottom of the log book."}</p>
+      <div class="ob-field"><label>Name</label><input id="ob-name" type="text" placeholder="Your name" value="${p.name ? escapeHtml(p.name) : ''}"></div>
+      <div class="ob-row">
+        <div class="ob-field"><label>Age</label><input id="ob-age" type="number" placeholder="e.g. 28" value="${p.age ?? ''}"></div>
+        <div class="ob-field"><label>Gender</label>
+          <select id="ob-gender">
+            <option value="male" ${p.gender==='male'?'selected':''}>Male</option>
+            <option value="female" ${p.gender==='female'?'selected':''}>Female</option>
+          </select>
+        </div>
+      </div>
+      <div class="ob-row">
+        <div class="ob-field"><label>Height (cm)</label><input id="ob-height" type="number" placeholder="e.g. 175" value="${p.height ?? ''}"></div>
+        <div class="ob-field"><label>Weight (kg)</label><input id="ob-weight" type="number" placeholder="e.g. 72" value="${p.weight ?? ''}"></div>
+      </div>
+      <div class="ob-field"><label>Main goal (pick one or more)</label>
+        <div class="ob-checks" id="ob-goal-group">
+          ${Object.entries(GOAL_LABELS).map(([k,label]) =>
+            `<label class="ob-check"><input type="checkbox" value="${k}" ${existingGoals.includes(k)?'checked':''}> ${label}</label>`).join('')}
+        </div>
+      </div>
+      <div class="ob-field"><label>Experience level</label>
+        <select id="ob-level">
+          <option value="beginner" ${(!p.level||p.level==='beginner')?'selected':''}>Beginner</option>
+          <option value="intermediate" ${p.level==='intermediate'?'selected':''}>Intermediate</option>
+          <option value="advanced" ${p.level==='advanced'?'selected':''}>Advanced</option>
+        </select>
+      </div>
+      <button class="ob-submit" onclick="submitOnboarding()">${existing ? 'Save changes' : 'Create my profile'}</button>
+      <div class="ob-note">Only your name is required — everything else helps personalize the log book.</div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+}
+
+window.submitOnboarding = async function(){
+  const name = document.getElementById('ob-name').value.trim();
+  if(!name){ alert('Please enter your name'); return; }
+  const age = parseInt(document.getElementById('ob-age').value, 10) || null;
+  const gender = document.getElementById('ob-gender').value;
+  if(!gender){ alert('Please select a gender'); return; }
+  const height = parseFloat(document.getElementById('ob-height').value) || null;
+  const weight = parseFloat(document.getElementById('ob-weight').value) || null;
+  const goal = Array.from(document.querySelectorAll('#ob-goal-group input:checked')).map(cb => cb.value);
+  if(goal.length === 0){ alert('Please select at least one main goal'); return; }
+  const level = document.getElementById('ob-level').value;
+
+  const existingProfile = await getMyProfile();
+  const isEdit = !!existingProfile;
+  const profile = {
+    name, age, gender, height, weight, goal, level,
+    joinedAt: isEdit ? existingProfile.joinedAt : Date.now()
+  };
+  await setVal('profile:me', profile);
+
+  if(!isEdit){
+    const id = await ensureUserId();
+    await setShared('member:'+id, { name, joinedAt: profile.joinedAt });
+  }
+
+  const overlay = document.getElementById('onboarding-overlay');
+  if(overlay) overlay.remove();
+
+  if(!isEdit){
+    welcomeBackInfo = await prepareWelcomeBack(profile);
+  }
+  render();
+};
+
+window.editProfile = async function(){
+  const existing = await getMyProfile();
+  showOnboardingModal(existing);
+};
+
 // ── Fresh-start migration ───────────────────────────────────────────────
 // Bumping DATA_VERSION wipes any previously logged data on next load so
 // the app always boots clean after a content/structure update.
@@ -2547,6 +2980,15 @@ async function bootstrap(){
     for(const k of keys){ await deleteVal(k); }
     await setVal('app:dataVersion', DATA_VERSION);
   }
+
+  await ensureUserId();
+  const profile = await getMyProfile();
+  if(!profile){
+    showOnboardingModal();
+    return; // render() happens once submitOnboarding() runs
+  }
+
+  welcomeBackInfo = await prepareWelcomeBack(profile);
   render();
 }
 bootstrap();
