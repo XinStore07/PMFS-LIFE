@@ -1,25 +1,33 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Log Book — 8 Week Program</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --bg:#0a0a0a;
-    --surface:#161616;
-    --surface-2:#1f1f1f;
-    --ink:#f2f2f0;
-    --ink-dim:#8a8a86;
-    --accent:#f2f2f0;
-    --accent-dim:#c4c4c0;
-    --good:#f2f2f0;
-    --bad:#6a6a66;
-    --border:rgba(242,242,240,0.12);
-    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --surface:#161513;
+    --surface-2:#1e1c19;
+    --ink:#f2f0ea;
+    --ink-dim:#8c8880;
+    --accent:#f2f0ea;
+    --accent-dim:#c4c0b6;
+    --good:#f2f0ea;
+    --bad:#6a655c;
+    --border:rgba(242,240,234,0.12);
+    --mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --display: 'Bebas Neue', -apple-system, sans-serif;
     --purple:#8b5cf6;
     --purple-dim:#b39ddb;
     --purple-soft:rgba(139,92,246,0.14);
+    --gold:#c9a227;
+    --gold-dim:#e3c765;
+    --gold-soft:rgba(201,162,39,0.14);
   }
   *{box-sizing:border-box;}
   html, body{height:100%;}
@@ -56,27 +64,47 @@
   }
   @keyframes driftGrid{ 0%{transform:translate(0,0);} 100%{transform:translate(46px,46px);} }
   .wrap{position:relative;z-index:1;max-width:720px;margin:0 auto;padding:20px 16px 60px;}
-  .brand{display:flex;align-items:baseline;justify-content:space-between;margin-bottom:18px;}
-  .brand h1{
-    font-size:22px;letter-spacing:-0.5px;text-transform:uppercase;font-weight:800;
-    font-stretch:condensed; margin:0;
+  .brand{
+    display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:16px;
+    padding-bottom:14px;border-bottom:1px solid var(--border);flex-wrap:wrap;row-gap:6px;
   }
-  .brand h1 span{color:var(--accent);}
-  .brand .meta{font-family:var(--mono);font-size:12px;color:var(--ink-dim);text-align:right;}
+  .brand .eyebrow{
+    font-family:var(--mono);font-size:10px;letter-spacing:.22em;color:var(--gold-dim);
+    text-transform:uppercase;margin:0 0 2px;font-weight:700;
+  }
+  .brand h1{
+    font-family:var(--display);font-size:40px;line-height:.85;letter-spacing:0.5px;
+    text-transform:uppercase;font-weight:400; margin:0;
+  }
+  .brand h1 span{color:var(--gold-dim);}
+  .brand .meta{font-family:var(--mono);font-size:11px;color:var(--ink-dim);text-align:right;letter-spacing:.03em;}
+  .brand .meta b{color:var(--ink);font-weight:700;}
 
   .phase-banner{
-    background:var(--surface); border:1px solid var(--border); border-left:3px solid var(--accent);
-    padding:10px 14px;border-radius:6px;font-size:13px;color:var(--ink-dim);margin-bottom:16px;
+    background:var(--surface);
+    border:1px solid var(--border); border-left:3px solid var(--gold);
+    padding:12px 15px 12px 13px;border-radius:4px 10px 10px 4px;font-size:13px;color:var(--ink-dim);margin:12px 0 16px;
+    line-height:1.55; box-shadow:0 6px 18px rgba(0,0,0,0.25);
+    position:relative;
   }
-  .phase-banner b{color:var(--accent);}
+  .phase-banner::before{
+    content:'ORDERS';
+    position:absolute; top:-8px; left:13px; background:var(--bg);
+    font-family:var(--mono); font-size:9px; letter-spacing:.18em; color:var(--gold-dim);
+    padding:0 6px; font-weight:700;
+  }
+  .phase-banner b{color:var(--ink);}
+  .phase-banner .bonus-line{color:var(--gold-dim);}
 
   .tabs{display:flex;gap:6px;margin-bottom:16px;}
   .tab{
-    flex:1;text-align:center;padding:9px 0;border-radius:6px;font-size:12px;
+    flex:1;text-align:center;padding:9px 0;border-radius:8px;font-size:12px;
     text-transform:uppercase;letter-spacing:0.06em;font-weight:700;
     background:var(--surface);color:var(--ink-dim);cursor:pointer;border:1px solid var(--border);
+    transition:transform .12s ease, background .15s ease, color .15s ease, border-color .15s ease;
   }
-  .tab.active{background:var(--accent);color:#1c1b1a;border-color:var(--accent);}
+  .tab:active{transform:scale(0.97);}
+  .tab.active{background:var(--accent);color:#1c1b1a;border-color:var(--accent);box-shadow:0 3px 10px rgba(0,0,0,0.25);}
   #app.theme-mental .tab.active{color:#fff;}
   #app.theme-financial .tab.active{color:#fff;}
   #app.theme-spiritual .tab.active{color:#fff;}
@@ -141,9 +169,12 @@
   .hm-cell.perfect{box-shadow:0 0 7px 1px rgba(139,92,246,0.75);border-color:var(--purple);}
   .hm-dot{width:6px;height:6px;border-radius:50%;border:1.4px solid;box-sizing:border-box;}
 
-  .card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:14px;}
+  .card{
+    background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:16px;margin-bottom:14px;
+    box-shadow:0 6px 20px rgba(0,0,0,0.22);
+  }
   .day-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;}
-  .day-head h2{font-size:19px;margin:0;text-transform:uppercase;letter-spacing:-0.3px;}
+  .day-head h2{font-family:var(--display);font-size:26px;font-weight:400;margin:0;text-transform:uppercase;letter-spacing:0.3px;}
   .day-head .badge{font-family:var(--mono);font-size:11px;color:var(--ink-dim);}
   .why{font-size:13px;color:var(--ink-dim);margin:2px 0 14px;}
 
@@ -173,9 +204,11 @@
   .feel.sel-hard.on{background:#3a3a38;color:var(--ink-dim);border-color:var(--ink-dim);border-style:dashed;}
   .log-btn{
     margin-left:auto;background:var(--accent);color:#1c1b1a;border:none;
-    padding:8px 14px;border-radius:6px;font-weight:700;font-size:12px;cursor:pointer;
-    text-transform:uppercase;letter-spacing:.03em;
+    padding:8px 14px;border-radius:8px;font-weight:700;font-size:12px;cursor:pointer;
+    text-transform:uppercase;letter-spacing:.03em;transition:transform .1s ease, box-shadow .15s ease;
+    box-shadow:0 2px 8px rgba(0,0,0,0.2);
   }
+  .log-btn:active{transform:scale(0.96);}
   .log-btn:disabled{opacity:.4;cursor:default;}
   .logged-tag{font-size:12px;color:var(--good);font-family:var(--mono);}
   .suggestion{font-size:12px;color:var(--ink-dim);margin-top:6px;}
@@ -194,12 +227,14 @@
   .weeklabel{font-family:var(--mono);font-size:11px;color:var(--ink-dim);margin:14px 0 6px;text-transform:uppercase;}
 
   .start-screen{text-align:center;padding:60px 20px;}
-  .start-screen h1{font-size:26px;text-transform:uppercase;margin-bottom:10px;}
+  .start-screen h1{font-family:var(--display);font-size:44px;font-weight:400;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:10px;}
   .start-screen p{color:var(--ink-dim);font-size:14px;max-width:400px;margin:0 auto 24px;}
   .start-btn{
-    background:var(--accent);color:#1c1b1a;border:none;padding:14px 26px;border-radius:8px;
+    background:var(--accent);color:#1c1b1a;border:none;padding:14px 26px;border-radius:10px;
     font-weight:800;font-size:14px;text-transform:uppercase;letter-spacing:.05em;cursor:pointer;
+    box-shadow:0 6px 20px rgba(242,242,240,0.15);transition:transform .12s ease;
   }
+  .start-btn:active{transform:scale(0.97);}
   .footer-actions{text-align:center;margin-top:22px;}
   .reset{background:none;border:none;color:var(--ink-dim);font-size:11px;text-decoration:underline;cursor:pointer;}
   .loading{text-align:center;color:var(--ink-dim);padding:40px;font-family:var(--mono);font-size:13px;}
@@ -212,6 +247,15 @@
   .video-embed{position:relative;width:100%;aspect-ratio:9/16;background:#000;}
   .video-embed.yt, .video-embed.vm{aspect-ratio:16/9;}
   .video-embed iframe, .video-embed video{position:absolute;top:0;left:0;width:100%;height:100%;border:0;}
+  /* TikTok's/Instagram's official embeds refuse to render below ~325px wide.
+     Give those a bigger box and scale the player down to fit instead of
+     letting it get clipped by the default 100px thumbnail width. */
+  .video-box:has(.video-embed.tt), .video-box:has(.video-embed.ig){width:220px;}
+  .video-embed.tt iframe, .video-embed.tt blockquote{
+    width:325px !important;height:578px !important;
+    transform:scale(0.677);transform-origin:top left;
+    position:absolute !important;top:0;left:0;border:0;
+  }
   .video-placeholder{padding:8px;text-align:center;}
   .video-placeholder input{
     width:100%;background:var(--bg);border:1px solid var(--border);color:var(--ink);
@@ -261,8 +305,9 @@
 
   .quote-card{
     background:linear-gradient(135deg, var(--surface) 0%, var(--surface-2) 100%);
-    border:1px solid var(--border); border-radius:12px; padding:22px 20px;margin-bottom:16px;
-    position:relative; overflow:hidden;
+    border:1px solid var(--border); border-top:2px solid var(--gold); border-radius:4px 4px 12px 12px;
+    padding:22px 20px;margin-bottom:16px;
+    position:relative; overflow:hidden; box-shadow:0 6px 20px rgba(0,0,0,0.22);
   }
   .quote-card::before{
     content:'"'; position:absolute; top:-30px; left:8px; font-size:140px; font-family:Georgia,serif;
@@ -330,9 +375,10 @@
   .todo-add-extra input[type=text]{flex:1;background:var(--surface-2);border:1px solid var(--border);color:var(--ink);padding:8px;border-radius:6px;font-size:12px;}
 
   .section-title{
-    font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-dim);
+    font-family:var(--mono);font-size:11px;text-transform:uppercase;letter-spacing:.14em;color:var(--ink-dim);
     margin:0 0 12px;font-weight:700;
   }
+  .section-title::before{content:'— ';color:currentColor;opacity:.75;}
 
   .toast-overlay{
     position:fixed;inset:0;background:rgba(0,0,0,0.75);display:flex;align-items:center;justify-content:center;
@@ -353,7 +399,8 @@
 
   .badges-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;margin-top:14px;}
   .badge-tile{text-align:center;padding:10px 4px;border-radius:8px;border:1px solid var(--border);opacity:0.35;}
-  .badge-tile.unlocked{opacity:1;background:var(--surface-2);border-color:var(--ink-dim);}
+  .badge-tile.unlocked{opacity:1;background:var(--gold-soft);border-color:var(--gold);box-shadow:0 0 12px rgba(201,162,39,0.25);}
+  .badge-tile.unlocked .badge-icon{color:var(--gold-dim);}
   .badge-icon{font-size:18px;}
   .badge-label{font-size:8.5px;color:var(--ink-dim);margin-top:4px;text-transform:uppercase;letter-spacing:.02em;line-height:1.2;}
 
@@ -410,7 +457,7 @@
 
   .court-seal{text-align:center;padding:6px 0 16px;}
   .court-seal .gavel{font-size:30px;}
-  .court-seal h2{font-size:15px;text-transform:uppercase;letter-spacing:.08em;margin:6px 0 2px;}
+  .court-seal h2{font-family:var(--display);font-size:22px;font-weight:400;text-transform:uppercase;letter-spacing:.06em;margin:6px 0 2px;}
   .court-seal p{font-size:12px;color:var(--ink-dim);max-width:420px;margin:0 auto;line-height:1.5;}
   .confess-box textarea{
     width:100%;background:var(--surface-2);border:1px solid var(--border);color:var(--ink);
@@ -486,17 +533,17 @@
   .assistant-panel{width:270px;max-width:calc(100vw - 36px);}
   .assistant-panel .coach-log{max-height:280px;}
 
-  /* ── Live user counter (header) ─────────────────────────────────────── */
-  .brand{flex-wrap:wrap;row-gap:8px;}
-  .user-counter{
-    display:flex;align-items:center;gap:6px;background:var(--surface);
-    border:1px solid var(--border);border-radius:999px;padding:6px 12px 6px 10px;
-    font-family:var(--mono);font-size:11px;color:var(--ink-dim);white-space:nowrap;
+  /* ── Progression bonus badge ───────────────────────────────────────── */
+  .progress-badge{
+    display:inline-flex;align-items:center;gap:5px;background:rgba(139,92,246,0.14);
+    border:1px solid rgba(139,92,246,0.35);color:var(--purple-dim);
+    padding:3px 9px;border-radius:999px;font-family:var(--mono);font-size:10.5px;font-weight:700;
   }
-  .uc-dot{width:7px;height:7px;border-radius:50%;background:#4ade80;box-shadow:0 0 6px 1px rgba(74,222,128,0.8);
-    animation:ucPulse 1.8s ease-in-out infinite;}
-  @keyframes ucPulse{0%,100%{opacity:1;}50%{opacity:.4;}}
-  .user-counter b{color:var(--ink);}
+  .pr-badge{
+    display:inline-block;background:linear-gradient(135deg,var(--gold-dim),var(--gold));color:#1c1b1a;
+    padding:2px 7px;border-radius:5px;font-size:10px;font-weight:800;letter-spacing:.03em;
+    text-transform:uppercase;margin-left:6px;box-shadow:0 0 8px rgba(201,162,39,0.4);
+  }
 
   /* ── Onboarding modal ───────────────────────────────────────────────── */
   .onboarding-overlay{
@@ -965,88 +1012,6 @@ async function deleteShared(key){
   delete memStore['shared:'+key];
 }
 
-// ── Who's using it right now (live, cross-device counter) ───────────────
-const PRESENCE_TTL_MS = 45000;   // a visitor counts as "online" if seen in the last 45s
-const HEARTBEAT_MS = 20000;      // how often this tab re-announces itself
-let myUserId = null;
-let welcomeBackInfo = null;      // computed once per load, shown in the profile card
-
-function genUserId(){ return 'u_' + Date.now().toString(36) + '_' + Math.random().toString(36).slice(2,8); }
-
-async function ensureUserId(){
-  if(myUserId) return myUserId;
-  let id = await getVal('user:id');
-  if(!id){ id = genUserId(); await setVal('user:id', id); }
-  myUserId = id;
-  return id;
-}
-async function getMyProfile(){ return await getVal('profile:me'); }
-
-async function sendHeartbeat(){
-  try{
-    const id = await ensureUserId();
-    await setShared('presence:'+id, Date.now());
-  }catch(e){ /* best effort */ }
-}
-
-async function computeUserCounts(){
-  const [memberKeys, presenceKeys] = await Promise.all([listShared('member:'), listShared('presence:')]);
-  const total = memberKeys.length;
-  const now = Date.now();
-  const checks = presenceKeys.slice(0, 60).map(async k => {
-    const ts = await getShared(k);
-    return (typeof ts === 'number' && now - ts < PRESENCE_TTL_MS) ? 1 : 0;
-  });
-  const results = await Promise.all(checks);
-  const active = Math.max(1, results.reduce((a,b)=>a+b,0)); // you're always at least 1
-  return { total: Math.max(total,1), active };
-}
-
-async function refreshUserCounter(){
-  const el = document.getElementById('user-counter');
-  if(!el) return;
-  try{
-    const { total, active } = await computeUserCounts();
-    el.innerHTML = `<span class="uc-dot"></span><b>${active}</b> online now · <b>${total}</b> member${total===1?'':'s'} total`;
-  }catch(e){ /* silent — non-critical UI */ }
-}
-
-let counterIntervalStarted = false;
-function startLiveCounter(){
-  refreshUserCounter();
-  sendHeartbeat();
-  if(counterIntervalStarted) return;
-  counterIntervalStarted = true;
-  setInterval(sendHeartbeat, HEARTBEAT_MS);
-  setInterval(refreshUserCounter, 8000);
-  window.addEventListener('beforeunload', () => {
-    if(myUserId) deleteShared('presence:'+myUserId);
-  });
-}
-
-// ── "Since you were last here" — diffs the profile/stats against the
-// snapshot saved on the previous visit, then updates that snapshot.
-async function prepareWelcomeBack(profile){
-  const prevSnap = await getVal('profile:snapshot');
-  let streak = 0, totalSessions = 0;
-  const start = await getStart();
-  if(start){
-    const todayIdx = dayIndexFor(start, new Date());
-    ({ streak, totalSessions } = await computeStreakStats(start, todayIdx));
-  }
-  const nowSnap = { weight: profile.weight ?? null, totalSessions, streak, lastSeen: Date.now() };
-  let info = null;
-  if(prevSnap){
-    const daysSince = Math.max(0, Math.round((nowSnap.lastSeen - (prevSnap.lastSeen||nowSnap.lastSeen)) / 86400000));
-    const weightDelta = (typeof nowSnap.weight === 'number' && typeof prevSnap.weight === 'number')
-      ? Math.round((nowSnap.weight - prevSnap.weight) * 10) / 10 : null;
-    const sessionsDelta = totalSessions - (prevSnap.totalSessions || 0);
-    info = { daysSince, weightDelta, sessionsDelta, streak };
-  }
-  await setVal('profile:snapshot', nowSnap);
-  return info;
-}
-
 function dateOnly(d){ return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
 function isoDay(d){ return dateOnly(d).toISOString().slice(0,10); }
 
@@ -1061,13 +1026,45 @@ function dayIndexFor(start, date){
 
 function roundHalf(n){ return Math.round(n*2)/2; }
 
-function computeStartWeight(exercise, bodyweight){
+function computeStartWeight(exercise, bodyweight, multiplier){
   if(!exercise.startW) return null;
   const { ratio, fallback } = exercise.startW;
+  const mult = multiplier || 1;
+  let base;
   if(bodyweight && ratio){
-    return roundHalf(Math.max(bodyweight * ratio, 2));
+    base = Math.max(bodyweight * ratio, 2);
+  } else {
+    base = fallback;
   }
-  return fallback;
+  return roundHalf(base * mult);
+}
+
+// ── Continuous Progressive Overload Engine ─────────────────────────────
+// Every FULLY COMPLETED week where you hit at least 70% of scheduled
+// sessions earns a compounding +3% strength bonus. This keeps building
+// week after week for the whole 8-week program — not just weeks 1-2 —
+// and is recalculated fresh every time the app renders, so it always
+// reflects your real attendance up to today.
+async function computeProgressionMultiplier(start, todayIdx){
+  const currentWeek = Math.min(Math.floor(todayIdx/7)+1, WEEKS);
+  let mult = 1;
+  let goodWeeks = 0;
+  for(let w=1; w<currentWeek; w++){
+    const { completed, possible } = await computeWeekSessions(start, w, todayIdx);
+    if(possible > 0 && (completed/possible) >= 0.7){
+      mult *= 1.03;
+      goodWeeks++;
+    }
+  }
+  return { mult: Math.round(mult*1000)/1000, goodWeeks };
+}
+
+// RIR (reps-in-reserve) target trends down across the FULL 8 weeks, not
+// just a 2-week/6-week split — intensity climbs continuously.
+function rirTargetForWeek(week){
+  if(week<=2) return 3; // adaptation
+  const growthWeek = week-3; // 0..5 across weeks 3-8
+  return Math.max(0, 2 - Math.floor(growthWeek/2)); // wk3-4:2, wk5-6:1, wk7-8:0
 }
 
 function getEmbedHtml(url){
@@ -1091,10 +1088,10 @@ function getEmbedHtml(url){
       const vidMatch = url.match(/\/video\/(\d+)/);
       const vid = vidMatch ? vidMatch[1] : '';
       if(vid){
-        // Direct iframe embed — no external script needed, so it actually loads and nothing can hijack a click.
-        return `<div class="video-embed tt"><iframe src="https://www.tiktok.com/embed/v2/${vid}" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen loading="lazy"></iframe></div>`;
+        // TikTok requires its official blockquote + embed.js widget — a bare
+        // iframe to tiktok.com/embed/v2/ is refused and renders blank.
+        return `<div class="video-embed tt"><blockquote class="tiktok-embed" cite="${url}" data-video-id="${vid}" style="max-width:605px;min-width:325px;margin:0;"><section></section></blockquote></div>`;
       }
-      // Short links (vm.tiktok.com/vt.tiktok.com) don't carry the numeric video id, so a true embed isn't possible — just link out.
       return `<div class="video-placeholder"><a href="${url}" target="_blank" rel="noopener" style="color:var(--accent);font-size:12px;">Open on TikTok ↗</a><div style="color:var(--ink-dim);font-size:10px;margin-top:4px;">Short links can't be embedded — paste the full tiktok.com/@user/video/… link to embed it here.</div></div>`;
     }
     if(host === 'vimeo.com'){
@@ -1112,29 +1109,40 @@ function getEmbedHtml(url){
     return `<div class="video-placeholder" style="color:var(--bad);font-size:11px;">Invalid link</div>`;
   }
 }
-function suggestNext(exercise, lastLog, phase){
+function suggestNext(exercise, lastLog, phase, progression){
   if(!lastLog) return null;
+  const mult = (progression && progression.mult) || 1;
+  const bonusActive = mult > 1.001;
   if(exercise.track === 'weight'){
     let w = lastLog.value;
     if(lastLog.feel === 'easy'){
       let inc = exercise.cat === 'isolation' ? 1.25 : (exercise.lower ? 5 : 2.5);
       if(phase === 'adaptation') inc = inc/2;
-      return { text: `Aim for ${roundHalf(w+inc)}kg`, value: roundHalf(w+inc) };
+      inc = inc * mult;
+      return { text: `Aim for ${roundHalf(w+inc)}kg${bonusActive?' 🔥':''}`, value: roundHalf(w+inc) };
     }
     if(lastLog.feel === 'justright'){
+      if(bonusActive){
+        const inc = (exercise.cat === 'isolation' ? 0.5 : (exercise.lower ? 2.5 : 1.25));
+        return { text: `🔥 Consistency bonus — push to ${roundHalf(w+inc)}kg`, value: roundHalf(w+inc) };
+      }
       return { text: `Same weight (${w}kg), try 1 more rep`, value: w };
     }
     return { text: `Drop slightly to ${roundHalf(Math.max(w-(exercise.lower?5:2.5),0))}kg`, value: roundHalf(Math.max(w-(exercise.lower?5:2.5),0)) };
   }
   if(exercise.track === 'reps'){
     let r = lastLog.value;
-    if(lastLog.feel === 'easy') return { text: `Aim for ${r+1} reps`, value: r+1 };
-    if(lastLog.feel === 'justright') return { text: `Match ${r} reps, cleaner form`, value: r };
+    if(lastLog.feel === 'easy') return { text: `Aim for ${r+1} reps${bonusActive?' 🔥':''}`, value: r+1 };
+    if(lastLog.feel === 'justright'){
+      if(bonusActive) return { text: `🔥 Consistency bonus — aim for ${r+1} reps`, value: r+1 };
+      return { text: `Match ${r} reps, cleaner form`, value: r };
+    }
     return { text: `Aim for ${Math.max(r-1,1)} solid reps`, value: Math.max(r-1,1) };
   }
   if(exercise.track === 'time'){
     let s = lastLog.value;
-    if(lastLog.feel === 'easy') return { text: `Hold ${s+10}s`, value: s+10 };
+    if(lastLog.feel === 'easy') return { text: `Hold ${s+10}s${bonusActive?' 🔥':''}`, value: s+10 };
+    if(lastLog.feel === 'justright' && bonusActive) return { text: `🔥 Consistency bonus — hold ${s+5}s`, value: s+5 };
     return { text: `Match ${s}s`, value: s };
   }
   return null;
@@ -1197,6 +1205,35 @@ async function findLastLog(exerciseId, beforeDayIndex){
   return best;
 }
 
+async function isPersonalBest(exerciseId, dayIdx, value){
+  const keys = await listPrefix(`exlog:${exerciseId}:`);
+  for(const k of keys){
+    const idx = parseInt(k.split(':').pop(), 10);
+    if(idx === dayIdx) continue;
+    const v = await getVal(k);
+    if(v && v.value >= value) return false;
+  }
+  return true;
+}
+
+async function computeAllPersonalBests(){
+  const exMap = await getAllExercisesById();
+  const keys = await listPrefix('exlog:');
+  const bestByEx = {};
+  for(const k of keys){
+    const parts = k.split(':');
+    const exId = parts[1];
+    const ex = exMap[exId];
+    if(!ex || ex.track !== 'weight') continue;
+    const v = await getVal(k);
+    if(!v) continue;
+    if(!bestByEx[exId] || v.value > bestByEx[exId].value){
+      bestByEx[exId] = { value: v.value, name: ex.name };
+    }
+  }
+  return Object.values(bestByEx).sort((a,b)=>b.value-a.value).slice(0,5);
+}
+
 let activeDayIndex = null;
 let activePillar = 'physical'; // physical | mental | financial | spiritual | court
 let activeSubTab = 'dashboard'; // dashboard | today | calendar
@@ -1230,18 +1267,24 @@ async function render(){
 
   let html = `
     <div class="brand">
-      <h1>PMFS <span>Log</span></h1>
-      <div class="meta">WEEK ${week} / ${WEEKS}<br>${pillarLabels[activePillar]}</div>
+      <div>
+        <div class="eyebrow">Field Log · Summer Program</div>
+        <h1>PMFS <span>Log</span></h1>
+      </div>
+      <div class="meta"><b>WEEK ${week}</b> / ${WEEKS}<br>${pillarLabels[activePillar]}</div>
     </div>
-    <div class="user-counter" id="user-counter"><span class="uc-dot"></span>…</div>
   `;
 
   if(activePillar === 'physical'){
+    const progression = await computeProgressionMultiplier(start, todayIdx);
+    const rir = rirTargetForWeek(week);
+    const bonusPct = Math.round((progression.mult - 1) * 100);
     html += `
     <div class="phase-banner">
-      ${phase === 'adaptation'
-        ? '<b>Weeks 1-2:</b> keep 3-4 reps in reserve on every set. No set to failure yet — you\'re re-teaching your joints the movements.'
-        : '<b>Weeks 3-8:</b> push your last set close to failure (1-2 reps in reserve). Increase weight only when a set feels easy.'}
+      ${week<=2
+        ? `<b>Week ${week} · Adaptation:</b> keep 3-4 reps in reserve on every set. No set to failure yet — you're re-teaching your joints the movements.`
+        : `<b>Week ${week} · Progressive Overload:</b> push toward ${rir} rep${rir===1?'':'s'} in reserve on your last set — intensity keeps climbing every week through week 8.`}
+      ${bonusPct > 0 ? `<br><span class="bonus-line">🔥 <b style="color:var(--gold-dim);">+${bonusPct}% strength bonus</b> unlocked from ${progression.goodWeeks} consistent week${progression.goodWeeks===1?'':'s'} — today's suggested weights are scaled up automatically.</span>` : ''}
     </div>`;
   }
 
@@ -1288,7 +1331,24 @@ async function render(){
   html += `<div class="footer-actions"><button class="reset" onclick="resetProgram()">Reset program</button></div>`;
   app.innerHTML = html;
   app.className = `wrap theme-${activePillar}`;
-  startLiveCounter();
+  loadTikTokEmbeds();
+}
+
+function loadTikTokEmbeds(){
+  // TikTok's widget script only scans the page for .tiktok-embed
+  // blockquotes once, when it first loads. Since we re-render the app's
+  // innerHTML on every state change, a fresh blockquote added after that
+  // first load never gets picked up on its own. Re-inserting the script
+  // tag (with a cache-busting query string) forces it to re-scan and
+  // convert any pending blockquotes into a working player.
+  if(!document.querySelector('.tiktok-embed')) return;
+  const old = document.getElementById('tiktok-embed-script');
+  if(old) old.remove();
+  const s = document.createElement('script');
+  s.id = 'tiktok-embed-script';
+  s.async = true;
+  s.src = 'https://www.tiktok.com/embed.js?_=' + Date.now();
+  document.body.appendChild(s);
 }
 
 const GOAL_LABELS = {
@@ -1302,31 +1362,15 @@ function goalDisplay(goal){
 }
 
 async function renderProfileCard(){
-  const profile = await getMyProfile();
+  const profile = await getVal('profile:me');
   if(!profile) return '';
   const joinedStr = profile.joinedAt
     ? new Date(profile.joinedAt).toLocaleDateString(undefined,{year:'numeric',month:'short',day:'numeric'})
     : '—';
 
-  let deltaHtml = '';
-  if(welcomeBackInfo){
-    const w = welcomeBackInfo;
-    const parts = [];
-    parts.push(w.daysSince === 0
-      ? "welcome back — you were already here earlier today"
-      : `welcome back — it's been ${w.daysSince} day${w.daysSince===1?'':'s'} since your last visit`);
-    if(typeof w.weightDelta === 'number' && w.weightDelta !== 0){
-      parts.push(`weight ${w.weightDelta>0?'+':''}${w.weightDelta} kg`);
-    }
-    if(w.sessionsDelta) parts.push(`+${w.sessionsDelta} session${w.sessionsDelta===1?'':'s'} logged`);
-    if(w.streak) parts.push(`🔥 ${w.streak} day streak`);
-    deltaHtml = `<div class="profile-welcome">${escapeHtml(parts.join(' · '))}</div>`;
-  }
-
   return `
     <div class="card profile-card">
       <div class="day-head"><h2>Your Profile</h2><span class="badge">Member since ${joinedStr}</span></div>
-      ${deltaHtml}
       <div class="profile-grid">
         <div class="profile-item"><div class="lbl">Name</div><div class="val">${escapeHtml(profile.name||'—')}</div></div>
         ${profile.age ? `<div class="profile-item"><div class="lbl">Age</div><div class="val">${profile.age}</div></div>` : ''}
@@ -1360,7 +1404,7 @@ async function computeWeekSessions(start, weekNum, todayIdx){
 }
 
 async function renderWeeklyProgressCard(start, todayIdx){
-  const profile = await getMyProfile();
+  const profile = await getVal('profile:me');
   if(!profile) return '';
 
   const weightLog = ((await getVal('weightlog')) || []).slice().sort((a,b)=>a.week-b.week);
@@ -1446,13 +1490,15 @@ async function renderDay(start, dayIdx, todayIdx, phase){
   const favorites = (await getVal('favorites')) || [];
   const exerciseList = prog.exercises.filter(e => !removedIds.includes(e.id)).concat(customExercises);
   const restSeconds = 90;
+  const progression = await computeProgressionMultiplier(start, todayIdx);
 
   let exHtml = '';
   for(const ex of exerciseList){
     const log = await getVal(`exlog:${ex.id}:${dayIdx}`);
     const lastLog = await findLastLog(ex.id, dayIdx);
-    const suggestion = suggestNext(ex, lastLog, phase);
-    const startW = computeStartWeight(ex, bodyweight);
+    const suggestion = suggestNext(ex, lastLog, phase, progression);
+    const startW = computeStartWeight(ex, bodyweight, progression.mult);
+    const isPR = log && ex.track === 'weight' && (await isPersonalBest(ex.id, dayIdx, log.value));
     const unit = ex.track === 'weight' ? 'kg' : (ex.track === 'time' ? 'sec' : 'reps');
     const placeholder = ex.track === 'weight' ? 'weight' : (ex.track === 'time' ? 'seconds' : 'reps done');
     const videoUrl = await getVal(`video:${ex.id}`);
@@ -1494,7 +1540,7 @@ async function renderDay(start, dayIdx, todayIdx, phase){
             ${!lastLog && !startW && ex.track!=='weight' ? `<div class="ex-sub">First time — go at a controlled pace and stop a couple reps shy of your limit.</div>` : ''}
             ${suggestion ? `<div class="suggestion">Last time: ${lastLog.value}${unit==='reps'?' reps':unit==='sec'?'s':unit}${lastLog.reps?` × ${lastLog.reps} reps`:''} (${lastLog.feel==='easy'?'easy':lastLog.feel==='justright'?'just right':'hard'}). <b>${suggestion.text}</b></div>` : ''}
             ${log ? `
-              <div class="ex-row"><span class="logged-tag">✓ Logged: ${log.value}${unit==='reps'?' reps':unit==='sec'?'s':unit}${log.reps?` × ${log.reps} reps`:''} — ${log.feel==='easy'?'easy':log.feel==='justright'?'just right':'hard'}</span></div>
+              <div class="ex-row"><span class="logged-tag">✓ Logged: ${log.value}${unit==='reps'?' reps':unit==='sec'?'s':unit}${log.reps?` × ${log.reps} reps`:''} — ${log.feel==='easy'?'easy':log.feel==='justright'?'just right':'hard'}</span>${isPR ? `<span class="pr-badge">🏆 PR</span>` : ''}</div>
             ` : `
               <div class="ex-row">
                 <input type="number" step="0.5" id="val-${ex.id}" placeholder="${placeholder}">
@@ -1620,6 +1666,11 @@ async function renderDashboard(start, todayIdx, week){
     return `<li><div><div class="fname">${ex.name}</div>${ex.cue ? `<div class="fcue">${ex.cue}${CUE_AM[ex.id] ? `<br>🇪🇹 ${CUE_AM[ex.id]}` : ''}</div>` : ''}</div><button class="fav-remove" onclick="toggleFavorite('${id}')">✕</button></li>`;
   }).join('') : `<div class="todo-empty">Star an exercise on any day to pin it here.</div>`;
 
+  const personalBests = await computeAllPersonalBests();
+  const bestsHtml = personalBests.length
+    ? personalBests.map(b => `<li><div class="fname">${b.name}</div><span style="font-family:var(--mono);color:var(--accent);font-weight:700;">${b.value}kg</span></li>`).join('')
+    : `<div class="todo-empty">Log a few sessions to start tracking your all-time best lifts.</div>`;
+
   return `
     <div class="quote-card">
       <div class="quote-text">${SESSION_QUOTE.text}</div>
@@ -1628,7 +1679,7 @@ async function renderDashboard(start, todayIdx, week){
     <div class="card">
       <div class="section-title">Streak</div>
       <div class="weight-stats">
-        <div class="wstat"><div class="num">${streak}</div><div class="lbl">Day Streak</div></div>
+        <div class="wstat"><div class="num" style="color:var(--gold-dim);">🔥 ${streak}</div><div class="lbl">Day Streak</div></div>
         <div class="wstat"><div class="num">${totalSessions}</div><div class="lbl">Total Sessions</div></div>
       </div>
       <div class="badges-grid">${badgesHtml}</div>
@@ -1645,6 +1696,10 @@ async function renderDashboard(start, todayIdx, week){
       </div>
       ${statsHtml}
       ${chartHtml}
+    </div>
+    <div class="card">
+      <div class="section-title">🏆 Personal Bests</div>
+      <ul class="fav-list">${bestsHtml}</ul>
     </div>
     <div class="card">
       <div class="section-title">Favorites</div>
@@ -2045,7 +2100,6 @@ async function renderAllTodosCombined(){
   if(!combined.length){
     return `<div class="todo-empty">Nothing on any of your lists yet. Add a task on any dashboard and it'll show up here.</div>`;
   }
-  // Timed tasks first (earliest first), then untimed tasks, incomplete before done within each group
   combined.sort((a,b) => {
     if(!!a.done !== !!b.done) return a.done ? 1 : -1;
     if(a.time && b.time) return a.time.localeCompare(b.time);
@@ -2081,7 +2135,6 @@ async function renderGeneralDashboard(start, todayIdx, week){
   const barChart = renderGeneralBarChart(stats);
   const heatmap = await renderGeneralHeatmap(start, todayIdx);
 
-  // Weight (kg) snapshot + mini sparkline, pulled from the Physical pillar's log
   const bodyweight = await getVal('user:bodyweight');
   const weightLog = ((await getVal('weightlog')) || []).slice().sort((a,b)=>a.week-b.week);
   let weightHtml = `<div class="todo-empty">Log your weight on the Physical tab to see it here.</div>`;
@@ -2644,7 +2697,22 @@ window.logExercise = async function(exId, dayIdx){
   if(!selected){ alert('Pick how it felt: easy, just right, or hard'); return; }
   const entry = { value: parseFloat(input.value), feel: selected.dataset.feel, loggedAt: new Date().toISOString() };
   if(repsInput && repsInput.value) entry.reps = parseInt(repsInput.value, 10);
+
+  const exMap = await getAllExercisesById();
+  const exDef = exMap[exId];
+  let isPR = false;
+  if(exDef && exDef.track === 'weight'){
+    const priorKeys = await listPrefix(`exlog:${exId}:`);
+    let maxPrev = 0;
+    for(const k of priorKeys){
+      const v = await getVal(k);
+      if(v && v.value > maxPrev) maxPrev = v.value;
+    }
+    if(maxPrev > 0 && entry.value > maxPrev) isPR = true;
+  }
+
   await setVal(`exlog:${exId}:${dayIdx}`, entry);
+  if(isPR) showToast(`🏆 New personal best on ${exDef.name} — ${entry.value}kg!`);
   render();
 };
 
@@ -2722,7 +2790,6 @@ window.saveVideoFile = async function(exId, inputEl){
     inputEl.value = '';
     return;
   }
-  // Uploaded videos are stored as base64 text, which inflates size ~33% — keep comfortably under the storage limit.
   const MAX_BYTES = 4 * 1024 * 1024;
   if(file.size > MAX_BYTES){
     alert(`That video is ${(file.size/1024/1024).toFixed(1)}MB. Uploaded videos need to stay under 4MB — try a shorter clip, compress it, or paste a YouTube/TikTok link instead.`);
@@ -2942,7 +3009,7 @@ window.submitOnboarding = async function(){
   if(goal.length === 0){ alert('Please select at least one main goal'); return; }
   const level = document.getElementById('ob-level').value;
 
-  const existingProfile = await getMyProfile();
+  const existingProfile = await getVal('profile:me');
   const isEdit = !!existingProfile;
   const profile = {
     name, age, gender, height, weight, goal, level,
@@ -2950,22 +3017,14 @@ window.submitOnboarding = async function(){
   };
   await setVal('profile:me', profile);
 
-  if(!isEdit){
-    const id = await ensureUserId();
-    await setShared('member:'+id, { name, joinedAt: profile.joinedAt });
-  }
-
   const overlay = document.getElementById('onboarding-overlay');
   if(overlay) overlay.remove();
 
-  if(!isEdit){
-    welcomeBackInfo = await prepareWelcomeBack(profile);
-  }
   render();
 };
 
 window.editProfile = async function(){
-  const existing = await getMyProfile();
+  const existing = await getVal('profile:me');
   showOnboardingModal(existing);
 };
 
@@ -2981,14 +3040,12 @@ async function bootstrap(){
     await setVal('app:dataVersion', DATA_VERSION);
   }
 
-  await ensureUserId();
-  const profile = await getMyProfile();
+  const profile = await getVal('profile:me');
   if(!profile){
     showOnboardingModal();
     return; // render() happens once submitOnboarding() runs
   }
 
-  welcomeBackInfo = await prepareWelcomeBack(profile);
   render();
 }
 bootstrap();
